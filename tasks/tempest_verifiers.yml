@@ -8,7 +8,7 @@
 
 - name: Create verifier
   sudo_user: rally
-  shell: "source /home/rally/rally/bin/activate && rally deployment use {{ item.key }} &>/dev/null && rally verify create-verifier --type tempest --name {{ item.key }}  && deactivate"
+  shell: "source /home/rally/rally/bin/activate && rally deployment use {{ item.key }} &>/dev/null && rally verify create-verifier --type tempest --name {{ item.key }} --source {{ tempest_source }} --version {{ tempest_version }}  && deactivate"
   when: item.key not in "{{ verifiers.stdout.split('|') | default([]) }}"
   args:
     executable: /bin/bash

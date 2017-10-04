@@ -41,6 +41,11 @@ clouds: {}
 
 configure_tempest: true
 
+# Where to take tempest from, and which version to use
+tempest_source: https://git.openstack.org/openstack/tempest
+tempest_version: master
+
+
 # Tempest uses two flavors for testing
 tempest_test_flavor: m1.tiny
 tempest_second_test_flavor: m1.small
