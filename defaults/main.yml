@@ -58,3 +58,6 @@ tempest_ca_path: "/etc/pki/ca-trust/extracted/openssl/ca-bundle.trust.crt"
 tempest_skip_tests: {}
 # Example: skip a single test
 # tempest_skip_tests: { tempest.scenario.test_volume_boot_pattern.TestVolumeBootPattern.test_volume_boot_pattern[compute,id-557cd2c2-4eb8-4dce-98be-f86765ff311b,image,volume]: "Disabled due to reasons" }
+
+# Set to True for the bash script to exit if we are not in a screen
+tempest_must_be_run_in_screen: False
