@@ -10,7 +10,7 @@ if [[ "$TERM" =~ "screen" ]]; then
   source /home/rally/rally/bin/activate
   rally deployment use {{ item.key }}
   rally verify use-verifier --id {{ item.key }}
-  rally verify start --skip-list {{ item.key }}-skip-list.yml --detailed
+  rally verify start --skip-list {{ item.key }}-skip-list.yml --detailed $*
 {% if rally_must_be_run_in_screen %}
 else
   echo "You are not in a screen: $TERM"
