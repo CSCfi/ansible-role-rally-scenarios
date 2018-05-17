@@ -1,6 +1,6 @@
 [DEFAULT]
-swift_operator_role = member
-swift_reseller_admin_role = admin
+swift_operator_role = {{ rally_tempest_swift_operator_role }}
+swift_reseller_admin_role = {{ rally_tempest_swift_reseller_admin_role }}
 
 [compute]
 image_ref = {{ tempest_cirros_image_uuid }}
@@ -10,8 +10,11 @@ flavor_ref_alt = {{ tempest_second_flavor_uuid }}
 fixed_network_name = {{ tempest_network_name }}
 
 [object-storage]
-swift_operator_role = member
-swift_reseller_admin_role = admin
+swift_operator_role = {{ rally_tempest_swift_operator_role }}
+swift_reseller_admin_role = {{ rally_tempest_swift_reseller_admin_role }}
+
+[object-storage-feature-enabled]
+discoverability = {{ rally_tempest_swift_discoverability }}
 
 [volume]
 volume_size = 10

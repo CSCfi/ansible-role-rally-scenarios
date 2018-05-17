@@ -45,6 +45,9 @@ configure_tempest: true
 tempest_source: https://git.openstack.org/openstack/tempest
 tempest_version: master
 
+# Tempest Openstack Roles
+rally_tempest_swift_operator_role: member
+rally_tempest_swift_reseller_admin_role: admin
 
 # Tempest uses two flavors for testing
 tempest_test_flavor: m1.tiny
