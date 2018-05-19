@@ -5,4 +5,5 @@
    vars:
      - configure_tempest: False
    roles:
+     - ansible-role-rally
      - ansible-role-rally-scenarios
