@@ -4,6 +4,40 @@
    remote_user: root
    vars:
      - configure_tempest: False
+     - vault_test_adminpw: "changeme"
+     - vault_prod_adminpw: "{{ vault_test_adminpw }}"
+     - vault_test_userpw: "{{ vault_test_adminpw }}"
+     - vault_prod_userpw: "{{ vault_test_adminpw }}"
+     - clouds:
+        testcloud:
+          region: region1
+          endpoint: testcloud.fi:5000/v2.0/
+          adminuser: admin
+          adminpassword: "{{ vault_test_adminpw }}"
+          admin_project_name: adminproject
+          admin_domain_name: Default
+          admin_project_domain_name: Default
+          username: user
+          userpassword: "{{ vault_test_userpw }}"
+          user_project_name: userproject
+          user_domain_name: Default
+          user_project_domain_name: Default
+          network_name: netowork_name_for_tempest
+        prodcloud:
+          region: region1
+          endpoint: prodcloud.fi:5000/v2.0/
+          adminuser: admin
+          adminpassword: "{{ vault_prod_adminpw }}"
+          admin_project_name: adminproject
+          admin_domain_name: Default
+          admin_project_domain_name: Default
+          username: user
+          userpassword: "{{ vault_prod_userpw }}"
+          user_project_name: userproject
+          user_domain_name: Default
+          user_project_domain_name: Default
+          network_name: netowork_name_for_tempest
+
    roles:
      - ansible-role-rally
      - ansible-role-rally-scenarios
