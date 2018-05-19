@@ -2,5 +2,7 @@
 
  - hosts: localhost
    remote_user: root
+   vars:
+     - configure_tempest: False
    roles:
      - ansible-role-rally-scenarios
