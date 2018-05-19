@@ -91,9 +91,9 @@ function test_ansible_setup(){
 
 
 function test_install_requirements(){
-    echo "TEST: ansible-galaxy install -r requirements.yml --force"
+    echo "TEST: ansible-galaxy install -r tests/requirements.yml --force"
 
-    ansible-galaxy install -r requirements.yml --force ||(echo "requirements install failed" && exit 2 )
+    ansible-galaxy install -r tests/requirements.yml --force ||(echo "requirements install failed" && exit 2 )
 
 }
 
