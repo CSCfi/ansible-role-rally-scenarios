@@ -13,7 +13,7 @@ fixed_network_name = {{ tempest_network_name }}
 swift_operator_role = {{ rally_tempest_swift_operator_role }}
 swift_reseller_admin_role = {{ rally_tempest_swift_reseller_admin_role }}
 
-{% if "{{ rally_tempest_swift_discoverability }}" is defined %}
+{% if rally_tempest_swift_discoverability is defined %}
 [object-storage-feature-enabled]
 discoverability = {{ rally_tempest_swift_discoverability }}
 {% endif %}
