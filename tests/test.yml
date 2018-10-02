@@ -14,6 +14,7 @@
        - "[section1]"
        - "setting2 = True"
      - rally_install_version: 'stable/0.12'
+     - tempest_manual_forloop_cleanup: True
      - clouds:
         testcloud:
           region: region1

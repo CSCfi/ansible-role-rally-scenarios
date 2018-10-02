@@ -21,6 +21,7 @@ clouds: {}
 #    network_name: network_name_for_tempest
 #    tempest_extra_settings: []
 #    tempest_skip_tests: {}
+#    tempest_manual_forloop_cleanup: True
 # Which tempest tests to skip
 # Moving this under the clouds dictionary so you can have a skip test
 # per env, as Dev and Test may not have the same amount of hardware to
@@ -45,6 +46,7 @@ clouds: {}
 #    network_name: netowork_name_for_tempest
 #    tempest_extra_settings: "{{ rally_tempest_extra_settings }}"
 #    tempest_skip_tests: {}
+#    tempest_manual_forloop_cleanup: False
 # Which tempest tests to skip
 # Moving this under the clouds dictionary so you can have a skip test
 # per env, as Dev and Test may not have the same amount of hardware to
@@ -97,6 +99,3 @@ tempest_must_be_run_in_screen: False
 # - "mysetting = False"
 # - "[section1]"
 # - "setting2 = True"
-
-# Set tempest_manual_forloop_cleanup: True to run bash for loops to cleanup a bit in case tempest jobs fail and don't clean up after themselves.
-tempest_manual_forloop_cleanup: False
