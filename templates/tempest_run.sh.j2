@@ -11,13 +11,13 @@ if [[ "$TERM" =~ "screen" ]]; then
   rally deployment use {{ item.key }}
   rally verify use-verifier --id {{ item.key }}
   rally verify start --skip-list {{ item.key }}-skip-list.yml --detailed $*
-{% if item.tempest_manual_forloop_cleanup %}
+{% if item.value.tempest_manual_forloop_cleanup %}
   # Remove any resources with tempest in their names. Perhaps acceptable in a devel/test environment.
   source /home/rally/.rally/openrc
   for snapshot in $(openstack volume snapshot list --all-projects -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest volume snapshot $snapshot; openstack volume snapshot delete $snapshot; done
   for volume in $(openstack volume list --all-projects -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest volume $volume; openstack volume delete $volume; done
   for image in $(openstack image list -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest image $image; openstack image delete $image; done
-  for project in $(openstack project list -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest $project; openstack project delete $project;done
+  for project in $(openstack project list -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest project $project; openstack project delete $project;done
   for domain in $(openstack domain list -f csv -c ID -c Name|tr -d '"'|grep tempest-test_domain|cut -d "," -f1); do echo \#Disabling and deleting Tempest domain $domain; openstack domain set --disable $domain; openstack domain delete $domain; done
 {% endif %}
 {% if tempest_must_be_run_in_screen %}

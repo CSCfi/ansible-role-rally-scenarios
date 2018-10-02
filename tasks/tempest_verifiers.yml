@@ -63,12 +63,20 @@
       tempest_second_flavor_uuid: "{{ second_flavor_id.stdout }}"
       tempest_network_name: "{{ item.value.network_name }}"
 
+  - name: store tempest configs in a persistent place
+    file:
+      state: directory
+      path: /home/rally/tempest_configs
+      mode: 0700
+      owner: rally
+      group: rally
+
   - name: Template in tempest config
-    template: src=tempest.j2 dest=/tmp/{{ item.key }}.tempest owner=rally group=rally mode=0700
+    template: src=tempest.j2 dest=/home/rally/tempest_configs/{{ item.key }}.tempest owner=rally group=rally mode=0700
     register: reg_tempest_config
 
   - name: Configure rally verifier if templating in the templest config file task changed
-    shell: "source /home/rally/rally/bin/activate && rally deployment use {{ item.key }} &>/dev/null && rally verify use-verifier --id {{ item.key }} &&  rally verify configure-verifier --extend /tmp/{{ item.key }}.tempest && deactivate"
+    shell: "source /home/rally/rally/bin/activate && rally deployment use {{ item.key }} &>/dev/null && rally verify use-verifier --id {{ item.key }} &&  rally verify configure-verifier --extend /home/rally/tempest_configs/{{ item.key }}.tempest && deactivate"
     args:
       executable: /bin/bash
     when: reg_tempest_config.changed
