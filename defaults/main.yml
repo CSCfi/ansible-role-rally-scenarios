@@ -98,3 +98,5 @@ tempest_must_be_run_in_screen: False
 # - "[section1]"
 # - "setting2 = True"
 
+# Set tempest_manual_forloop_cleanup: True to run bash for loops to cleanup a bit in case tempest jobs fail and don't clean up after themselves.
+tempest_manual_forloop_cleanup: False
