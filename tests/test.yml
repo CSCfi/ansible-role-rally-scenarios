@@ -15,6 +15,16 @@
        - "setting2 = True"
      - rally_install_version: '1.6.0'
      - tempest_manual_forloop_cleanup: True
+     - tempest_skip_tests_general: &tempest_skip_tests_general
+         tempest.api.compute.servers.test_disk_config.ServerDiskConfigTestJSON.test_resize_server_from_auto_to_manual[id-693d16f3-556c-489a-8bac-3d0ca2490bad]: "Only one Hypervisor in Dev and Test, these can be skipped"
+         tempest.api.compute.servers.test_disk_config.ServerDiskConfigTestJSON.test_resize_server_from_manual_to_auto[id-414e7e93-45b5-44bc-8e03-55159c6bfc97]: "Only one Hypervisor in Dev and Test, these can be skipped"
+     - tempest_skip_tests_devtest_envs:
+         << : *tempest_skip_tests_general
+         tempest.api.compute.admin.test_aggregates.AggregatesAdminTestJSON.test_aggregate_add_host_create_server_with_az[id-96be03c7-570d-409c-90f8-e4db3c646996]: "Cannot add host to aggregate 881. Reason: One or more hosts already in availability zone(s) nova."
+         tempest.api.compute.admin.test_migrations.MigrationsAdminTest.test_list_migrations_in_flavor_resize_situation[id-1b512062-8093-438e-b47a-37d2f597cd64]: "Only one Hypervisor in Dev and Test, these can be skipped"
+
+
+
      - clouds:
         testcloud:
           region: region1
@@ -31,7 +41,7 @@
           user_project_domain_name: Default
           network_name: netowork_name_for_tempest
           tempest_extra_settings: "{{ rally_tempest_extra_settings }}"
-          tempest_skip_tests: {}
+          tempest_skip_tests: "{{ tempest_skip_tests_general }}"
         prodcloud:
           region: region1
           endpoint: prodcloud.fi:5000/v2.0/

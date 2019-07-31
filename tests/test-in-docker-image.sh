@@ -121,6 +121,8 @@ function extra_tests(){
 
     echo "TEST: ls -la /home/rally"
     ls -la /home/rally
+    echo "Print skip lists (more|cat to show filenames)"
+    more /home/rally/*skip*|cat
 }
 
 

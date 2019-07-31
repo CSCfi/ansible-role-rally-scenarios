@@ -1,4 +1,4 @@
 ---
-{% for key, value in item.value.tempest_skip_tests.items() %}
+{% for key, value in item.value.tempest_skip_tests.items()|sort %}
 {{ key }}: "{{ value }}"
 {% endfor %}
