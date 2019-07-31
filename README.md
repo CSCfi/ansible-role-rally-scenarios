@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/CSCfi/ansible-role-rally-scenarios.svg?branch=master)](https://travis-ci.org/CSCfi/ansible-role-rally-scenarios)
+
 # ansible-role-rally-scenarios
 
 This role is is meant to be used together with ansible-role-rally.
