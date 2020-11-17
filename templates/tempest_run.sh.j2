@@ -11,6 +11,13 @@ if [[ "$TERM" =~ "screen" ]]; then
   rally deployment use {{ item.key }}
   rally verify use-verifier --id {{ item.key }}
   rally verify start --skip-list {{ item.key }}-skip-list.yml --concurrency {{ concurrency }} --detailed $*
+  FAILED=$(rally verify show|grep \|\ fail\ |awk '{print $2}')
+  FAILED_COUNT=$(echo "$FAILED"|wc -w)
+  if [ "$FAILED_COUNT" -lt "30" ]; then
+    for FAILED_TEST in "$FAILED"; do
+      rally verify start --skip-list {{ item.key }}-skip-list.yml --concurrency {{ concurrency }} --detailed --pattern "$FAILED_TEST" --tag cron_rerun_failed
+    done
+  fi
 {% if item.value.tempest_manual_forloop_cleanup %}
   # Remove any resources with tempest in their names. Perhaps acceptable in a devel/test environment.
   source /home/rally/.rally/openrc
