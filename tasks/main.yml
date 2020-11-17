@@ -25,10 +25,27 @@
   loop_control:
     label: "{{ item.key }}"
 
+- name: Create deployment files (non-admin)
+  template: src=deploy_nonadmin.json.j2 dest=/home/rally/{{ item.key }}/deploy.json owner=rally group=rally mode=0760
+  with_dict: "{{ clouds_nonadmin }}"
+  when: item.key not in deployments.stdout | default([])
+  loop_control:
+    label: "{{ item.key }}"
+
 - name: Create deployments
   become_user: rally
   shell: source /home/rally/rally/bin/activate && rally deployment create --file /home/rally/{{ item.key }}/deploy.json --name {{ item.key }} && deactivate
   with_dict: "{{ clouds }}"
+  when: item.key not in deployments.stdout | default([])
+  args:
+    executable: /bin/bash
+  loop_control:
+    label: "{{ item.key }}"
+
+- name: Create deployments (non-admin)
+  become_user: rally
+  shell: source /home/rally/rally/bin/activate && rally deployment create --file /home/rally/{{ item.key }}/deploy.json --name {{ item.key }} && deactivate
+  with_dict: "{{ clouds_nonadmin }}"
   when: item.key not in deployments.stdout | default([])
   args:
     executable: /bin/bash
