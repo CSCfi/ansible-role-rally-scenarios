@@ -6,3 +6,6 @@
 
 - include_tasks: tempest_verifiers.yml
   with_dict: "{{ clouds }}"
+
+- include_tasks: tempest_verifiers.yml
+  with_dict: "{{ clouds_nonadmin }}"
