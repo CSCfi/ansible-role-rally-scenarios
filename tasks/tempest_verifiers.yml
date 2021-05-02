@@ -56,9 +56,9 @@
     args:
       executable: /bin/bash
 
-  - name: Check for Rally network UUID
-    shell: "source /home/rally/rally/bin/activate && rally deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && openstack network show -f value -c id {{ item.value.network_name }} && deactivate"
-    register: rally_network_id
+  - name: Check for public network UUID
+    shell: "source /home/rally/rally/bin/activate && rally deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && openstack network list --project-domain {{ admin_project_domain_name }} |grep public |  cut -f 2 -d  '|' | head -n 1 && deactivate"
+    register: public_network_id
     changed_when: False
     args:
       executable: /bin/bash
@@ -69,7 +69,7 @@
       tempest_flavor_uuid: "{{ flavor_id.stdout }}"
       tempest_second_flavor_uuid: "{{ second_flavor_id.stdout }}"
       tempest_network_name: "{{ item.value.network_name }}"
-      tempest_network_id: "{{ rally_network_id.stdout }}"
+      tempest_public_network_id: "{{ public_network_id.stdout }}"
 
   - name: store tempest configs in a persistent place
     file:
