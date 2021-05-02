@@ -57,7 +57,7 @@
       executable: /bin/bash
 
   - name: Check for public network UUID
-    shell: "source /home/rally/rally/bin/activate && rally deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && openstack network list --project-domain {{ admin_project_domain_name }} |grep public |  cut -f 2 -d  '|' | head -n 1 && deactivate"
+    shell: "source /home/rally/rally/bin/activate && rally deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && openstack network list --project-domain {{ admin_project_domain_name }} |grep public |  cut -f 2 -d  '|' | head -n 1 && deactivate"
     register: public_network_id
     changed_when: False
     args:
