@@ -56,12 +56,20 @@
     args:
       executable: /bin/bash
 
+  - name: Check for public network UUID
+    shell: "source /home/rally/rally/bin/activate && rally deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && openstack network list --external |grep public |  cut -f 2 -d  '|' | head -n 1 && deactivate"
+    register: public_network_id
+    changed_when: False
+    args:
+      executable: /bin/bash
+
   - name: Set ansible facts used in tempest config
     set_fact:
       tempest_cirros_image_uuid: "{{ image_id.stdout }}"
       tempest_flavor_uuid: "{{ flavor_id.stdout }}"
       tempest_second_flavor_uuid: "{{ second_flavor_id.stdout }}"
       tempest_network_name: "{{ item.value.network_name }}"
+      tempest_public_network_id: "{{ public_network_id.stdout }}"
 
   - name: store tempest configs in a persistent place
     file:
