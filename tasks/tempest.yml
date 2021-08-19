@@ -1,11 +1,21 @@
 ---
-- name: Get image
-  get_url:
-    url: "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img"
-    dest: "/tmp/cirros-0.3.5-x86_64-disk.img"
+- name: Get image locally
+  local_action:
+    get_url:
+      url: "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img"
+      dest: "/tmp/cirros-0.3.5-x86_64-disk.img"
 
 - name: Convert image to raw format
-  command: "qemu-img convert -f qcow2 -O raw /tmp/cirros-0.3.5-x86_64-disk.img /tmp/cirros-0.3.5-x86_64-disk.img.raw"
+  local_action:
+    command: "qemu-img convert -f qcow2 -O raw /tmp/cirros-0.3.5-x86_64-disk.img /tmp/cirros-0.3.5-x86_64-disk.img.raw"
+
+- name: Upload image to rally server
+  copy:
+    src: /tmp/cirros-0.3.5-x86_64-disk.img.raw
+    dest: /tmp/cirros-0.3.5-x86_64-disk.img.raw
+    owner: root
+    group: root
+    mode: '0644'
 
 - include_tasks: tempest_verifiers.yml
   with_dict: "{{ clouds }}"
