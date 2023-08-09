@@ -3,20 +3,20 @@
   become: false
   local_action:
     module: get_url
-    url: "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img"
-    dest: "/tmp/cirros-0.3.5-x86_64-disk.img"
+    url: "{{ rally_cirros_img_url}}/{{ rally_cirros_img_name }}"
+    dest: "/tmp/{{ rally_cirros_img_name }}"
     use_proxy: no
 
 - name: Convert image to raw format
   become: false
   local_action:
     module: command
-    cmd: "qemu-img convert -f qcow2 -O raw /tmp/cirros-0.3.5-x86_64-disk.img /tmp/cirros-0.3.5-x86_64-disk.img.raw"
+    cmd: "qemu-img convert -f qcow2 -O raw /tmp/{{ rally_cirros_img_name }} /tmp/{{ rally_cirros_img_name }}.raw"
 
 - name: Upload image to rally server
   copy:
-    src: /tmp/cirros-0.3.5-x86_64-disk.img.raw
-    dest: /tmp/cirros-0.3.5-x86_64-disk.img.raw
+    src: "/tmp/{{ rally_cirros_img_name }}.raw"
+    dest: "/tmp/{{ rally_cirros_img_name }}.raw"
     owner: root
     group: root
     mode: '0644'
