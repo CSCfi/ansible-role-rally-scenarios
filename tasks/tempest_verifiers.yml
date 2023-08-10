@@ -30,7 +30,7 @@
 
     # Can't use os_image since we need to source the rally deployment
   - name: Upload cirros image to openstack
-    shell: "source /home/rally/rally/bin/activate && rally deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && glance image-create --name cirros --visibility public --file /tmp/cirros-0.3.5-x86_64-disk.img.raw --container-format bare --disk-format raw && deactivate"
+    shell: "source /home/rally/rally/bin/activate && rally deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && glance image-create --name cirros --visibility public --file /tmp/{{ rally_cirros_img_url | basename }}.raw --container-format bare --disk-format raw && deactivate"
     when: existing_images.rc == 1
     args:
       executable: /bin/bash
