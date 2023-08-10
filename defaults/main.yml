@@ -106,8 +106,7 @@ concurrency: 1
 # - "[section1]"
 # - "setting2 = True"
 
-rally_cirros_img_url: "http://download.cirros-cloud.net/0.6.2/"
-rally_cirros_img_name: "cirros-0.6.2-x86_64-disk.img"
+rally_cirros_img_url: "http://download.cirros-cloud.net/0.6.2/cirros-0.6.2-x86_64-disk.img"
 
 # Git clone rally-openstack because the sample scenarios are there and they are nice to have
 rally_openstack_gitrepo_source: https://github.com/openstack/rally-openstack
