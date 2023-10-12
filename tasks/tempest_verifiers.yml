@@ -88,7 +88,7 @@
     shell: "source /home/rally/rally/bin/activate && rally deployment use {{ item.key }} &>/dev/null && rally verify use-verifier --id {{ item.key }} &&  rally verify configure-verifier --extend /home/rally/tempest_configs/{{ item.key }}.tempest && deactivate"
     args:
       executable: /bin/bash
-    when: reg_tempest_config.changed or verifier_created.stat.exists
+    when: reg_tempest_config.changed or verifier_created is not skipped
 
   - name: Template in skip list
     template: src=tempest_skip_list.yml.j2 dest=/home/rally//{{ item.key }}-skip-list.yml owner=rally group=rally mode=0600
