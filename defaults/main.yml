@@ -1,4 +1,8 @@
 ---
+rally_install_method: package
+container_image: xrally/xrally-openstack
+container_name: rally
+
 clouds: {}
 # Configuration for each cloud which will be set up. A rally "deployment" is
 # set up for each configured cloud. If configure_tempest: True, a tempest
@@ -55,7 +59,7 @@ clouds: {}
 #     tempest_skip_tests: { tempest.scenario.test_volume_boot_pattern.TestVolumeBootPattern.test_volume_boot_pattern[compute,id-557cd2c2-4eb8-4dce-98be-f86765ff311b,image,volume]: "Disabled due to reasons" }
 
 # These settings are used if they are set. Your server might need to go through
-# a proxy server to reach the relevant packages etc. 
+# a proxy server to reach the relevant packages etc.
 #proxy_env:
 # http_proxy: proxy_server_address:port
 # https_proxy: proxy_server_address_port

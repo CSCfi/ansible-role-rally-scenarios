@@ -1,11 +1,21 @@
 ---
+- name: Set rally command according to install method for package
+  set_fact:
+    rally_cmd: 'source /home/rally/rally/bin/activate && rally'
+  when: rally_install_method == 'package'
+
+- name: Set rally command according to install method for container
+  set_fact:
+    rally_cmd: "docker run -v /home/rally:/home/rally/data {{ container_image }}"
+  when: rally_install_method == 'container'
+
 - name: Check if tempest_skip_tests is not defined
   assert:
     that: tempest_skip_tests is not defined
     msg: "Note the global tempest_skip_tests variable has now been moved to a per cloud env variable"
 
 - name: Check existing deployments
-  shell: source /home/rally/rally/bin/activate && rally deployment list && deactivate
+  shell: "{{ rally_cmd }} deployment list"
   register: deployments
   changed_when: False
   args:
@@ -27,7 +37,7 @@
 
 - name: Create deployments
   become_user: rally
-  shell: source /home/rally/rally/bin/activate && rally deployment create --file /home/rally/{{ item.key }}/deploy.json --name {{ item.key }} && deactivate
+  shell: "{{ rally_cmd }} deployment create --file /home/rally/{{ item.key }}/deploy.json --name {{ item.key }}"
   with_dict: "{{ clouds }}"
   when: item.key not in deployments.stdout | default([])
   args:

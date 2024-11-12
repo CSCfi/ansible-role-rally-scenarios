@@ -6,7 +6,7 @@
 
 - name: Check existing rally verifiers
   become_user: rally
-  shell: "source /home/rally/rally/bin/activate && rally deployment use {{ item.key }} &>/dev/null && rally verify list-verifiers | grep -v WARNING && deactivate"
+  shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && {{ rally_cmd }} verify list-verifiers | grep -v WARNING"
   register: verifiers
   changed_when: False
   args:
@@ -14,7 +14,7 @@
 
 - name: Create rally verifiers
   become_user: rally
-  shell: "source /home/rally/rally/bin/activate && rally deployment use {{ item.key }} &>/dev/null && rally verify create-verifier --type tempest --name {{ item.key }} --source {{ tempest_source }} --version {{ tempest_version }}  && deactivate"
+  shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && {{ rally_cmd }} verify create-verifier --type tempest --name {{ item.key }} --source {{ tempest_source }} --version {{ tempest_version }} "
   when: item.key not in verifiers.stdout | default([])
   register: verifier_created
   args:
@@ -22,43 +22,43 @@
 
 - block:
   - name: Check for cirros images
-    shell: "source /home/rally/rally/bin/activate && rally deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && openstack image list --public -f value -c Name |grep cirros$ && deactivate"
+    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && openstack image list --public -f value -c Name |grep cirros$"
     register: existing_images
-    failed_when: existing_images.rc  > 1
+    failed_when: existing_images.rc  > 1
     changed_when: False
     args:
       executable: /bin/bash
 
     # Can't use os_image since we need to source the rally deployment
   - name: Upload cirros image to openstack
-    shell: "source /home/rally/rally/bin/activate && rally deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && glance image-create --name cirros --visibility public --file /tmp/{{ rally_cirros_img_url | basename }}.raw --container-format bare --disk-format raw && deactivate"
+    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && glance image-create --name cirros --visibility public --file /tmp/{{ rally_cirros_img_url | basename }}.raw --container-format bare --disk-format raw"
     when: existing_images.rc == 1
     args:
       executable: /bin/bash
 
   - name: Get image id
-    shell: "source /home/rally/rally/bin/activate && rally deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && openstack image list --public -f value -c Name -c ID | grep cirros$ | cut -f 1 -d ' ' | head -n 1 && deactivate"
+    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && openstack image list --public -f value -c Name -c ID | grep cirros$ | cut -f 1 -d ' ' | head -n 1"
     register: image_id
     changed_when: False
     args:
       executable: /bin/bash
 
   - name: Check for test flavor
-    shell: "source /home/rally/rally/bin/activate && rally deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && nova flavor-list  |grep {{ tempest_test_flavor }} | cut -f 2 -d  '|' | head -n 1 && deactivate"
+    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && nova flavor-list  |grep {{ tempest_test_flavor }} | cut -f 2 -d  '|' | head -n 1"
     register: flavor_id
     changed_when: False
     args:
       executable: /bin/bash
 
   - name: Check for second test flavor
-    shell: "source /home/rally/rally/bin/activate && rally deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && nova flavor-list  |grep {{ tempest_second_test_flavor }} | cut -f 2 -d  '|' | head -n 1 && deactivate"
+    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && nova flavor-list  |grep {{ tempest_second_test_flavor }} | cut -f 2 -d  '|' | head -n 1"
     register: second_flavor_id
     changed_when: False
     args:
       executable: /bin/bash
 
   - name: Check for public network UUID
-    shell: "source /home/rally/rally/bin/activate && rally deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && openstack network list --external |grep public |  cut -f 2 -d  '|' | head -n 1 && deactivate"
+    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && openstack network list --external |grep public |  cut -f 2 -d  '|' | head -n 1"
     register: public_network_id
     changed_when: False
     args:
@@ -85,7 +85,7 @@
     register: reg_tempest_config
 
   - name: Configure rally verifier if templating in the templest config file task changed or new verifier created
-    shell: "source /home/rally/rally/bin/activate && rally deployment use {{ item.key }} &>/dev/null && rally verify use-verifier --id {{ item.key }} &&  rally verify configure-verifier --extend /home/rally/tempest_configs/{{ item.key }}.tempest && deactivate"
+    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && {{ rally_cmd }} verify use-verifier --id {{ item.key }} &&  {{ rally_cmd }} verify configure-verifier --extend /home/rally/tempest_configs/{{ item.key }}.tempest"
     args:
       executable: /bin/bash
     when: reg_tempest_config.changed or verifier_created is not skipped
