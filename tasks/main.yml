@@ -6,7 +6,7 @@
 
 - name: Set rally command according to install method for container
   set_fact:
-    rally_cmd: "podman run -v /home/rally/rally/etc/rally/rally.conf:/home/rally/.rally/rally.conf -v /home/rally:/home/rally/.rally --name rally {{ container_image }}"
+    rally_cmd: "podman run -v /home/rally/rally/etc/rally/rally.conf:/home/rally/.rally/rally.conf -v /home/rally:/home/rally/.rally {{ container_image }}"
   when: rally_install_method == 'container'
 
 - name: Check if tempest_skip_tests is not defined
