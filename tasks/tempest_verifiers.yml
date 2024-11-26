@@ -6,7 +6,7 @@
 
 - name: Select scenario {{ item.key }}
   become_user: rally
-  shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null"
+  shell: "{{ rally_cmd }} deployment use {{ item.key }}"
   changed_when: False
   args:
     executable: /bin/bash
