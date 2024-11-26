@@ -2,11 +2,13 @@
 - name: Set rally command according to install method for package
   set_fact:
     rally_cmd: 'source /home/rally/rally/bin/activate && rally'
+    rally_user: 'rally'
   when: rally_install_method == 'package'
 
 - name: Set rally command according to install method for container
   set_fact:
     rally_cmd: "podman run -v /home/rally/tmp:/tmp -v /home/rally/rally/etc/rally/rally.conf:/home/rally/.rally/rally.conf -v /home/rally:/home/rally/.rally {{ container_image }}"
+    rally_user: 'root'
   when: rally_install_method == 'container'
 
 - name: Check if tempest_skip_tests is not defined
@@ -36,7 +38,7 @@
     label: "{{ item.key }}"
 
 - name: Create deployments
-  become_user: rally
+  become_user: "{{ rally_user }}"
   shell: "{{ rally_cmd }} deployment create --file /home/rally/{{ item.key }}/deploy.json --name {{ item.key }}"
   with_dict: "{{ clouds }}"
   when: item.key not in deployments.stdout | default([])
