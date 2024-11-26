@@ -8,7 +8,7 @@
 
 - name: Set rally command and user according to install method for container
   set_fact:
-    rally_cmd: "podman run -v /home/rally/deployments:/home/rally/deployments -v /home/rally/tmp:/tmp -v /home/rally/rally/etc/rally/rally.conf:/home/rally/.rally/rally.conf -v /home/rally/.rally:/home/rally/.rally {{ container_image }}"
+    rally_cmd: "podman run -v /home/rally/tempest_configs:/home/rally/tempest_configs -v /home/rally/deployments:/home/rally/deployments -v /home/rally/tmp:/tmp -v /home/rally/rally/etc/rally/rally.conf:/home/rally/.rally/rally.conf -v /home/rally/.rally:/home/rally/.rally {{ container_image }}"
     rally_user: 'root'
     deployments_folder: '/home/rally/deployments'
   when: rally_install_method == 'container'

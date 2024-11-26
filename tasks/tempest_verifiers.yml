@@ -82,26 +82,26 @@
   - name: store tempest configs in a persistent place
     file:
       state: directory
-      path: "{{ deployments_folder }}/tempest_configs"
+      path: /home/rally/tempest_configs
       mode: 0700
       owner: rally
       group: rally
 
   - name: Template in tempest config
-    template: src=tempest.j2 dest={{ deployments_folder }}/tempest_configs/{{ item.key }}.tempest owner=rally group=rally mode=0700
+    template: src=tempest.j2 dest=/home/rally/tempest_configs/{{ item.key }}.tempest owner=rally group=rally mode=0700
     register: reg_tempest_config
 
   - name: Configure rally verifier if templating in the templest config file task changed or new verifier created
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && {{ rally_cmd }} verify use-verifier --id {{ item.key }} &&  {{ rally_cmd }} verify configure-verifier --extend {{ deployments_folder }}/tempest_configs/{{ item.key }}.tempest"
+    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && {{ rally_cmd }} verify use-verifier --id {{ item.key }} &&  {{ rally_cmd }} verify configure-verifier --extend /home/rally/tempest_configs/{{ item.key }}.tempest"
     args:
       executable: /bin/bash
     when: reg_tempest_config.changed or verifier_created is not skipped
 
   - name: Template in skip list
-    template: src=tempest_skip_list.yml.j2 dest={{ deployments_folder }}//{{ item.key }}-skip-list.yml owner=rally group=rally mode=0600
+    template: src=tempest_skip_list.yml.j2 dest={{ deployments_folder }}/{{ item.key }}-skip-list.yml owner=rally group=rally mode=0600
 
   - name: Template in tempest run bash script
-    template: src=tempest_run.sh.j2 dest={{ deployments_folder }}//{{ item.key }}-tempest_run.sh owner=rally group=rally mode=0700
+    template: src=tempest_run.sh.j2 dest={{ deployments_folder }}/{{ item.key }}-tempest_run.sh owner=rally group=rally mode=0700
 
   - name: "Configure cronjob for deployment {{ item.key }}"
     cron:
