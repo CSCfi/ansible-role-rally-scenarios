@@ -3,12 +3,14 @@
   set_fact:
     rally_cmd: 'source /home/rally/rally/bin/activate && rally'
     rally_user: 'rally'
+    deployments_folder: '/home/rally'
   when: rally_install_method == 'package'
 
 - name: Set rally command and user according to install method for container
   set_fact:
-    rally_cmd: "podman run -v /home/rally/tmp:/tmp -v /home/rally/rally/etc/rally/rally.conf:/home/rally/.rally/rally.conf -v /home/rally/.rally:/home/rally/.rally {{ container_image }}"
+    rally_cmd: "podman run -v /home/rally/deployments:/home/rally/deployments -v /home/rally/tmp:/tmp -v /home/rally/rally/etc/rally/rally.conf:/home/rally/.rally/rally.conf -v /home/rally/.rally:/home/rally/.rally {{ container_image }}"
     rally_user: 'root'
+    deployments_folder: '/home/rally/deployments'
   when: rally_install_method == 'container'
 
 - name: Check if tempest_skip_tests is not defined
@@ -24,14 +26,14 @@
     executable: /bin/bash
 
 - name: Create directories for deployments
-  file: path=/home/rally/{{ item.key }} owner=rally group=rally mode=0750 state=directory
+  file: path={{ deployments_folder }}/{{ item.key }} owner=rally group=rally mode=0750 state=directory
   with_dict: "{{ clouds }}"
   when: item.key not in deployments.stdout | default([])
   loop_control:
     label: "{{ item.key }}"
 
 - name: Create deployment files
-  template: src=deploy.json.j2 dest=/home/rally/{{ item.key }}/deploy.json owner=rally group=rally mode=0760
+  template: src=deploy.json.j2 dest=/{{ item.key }}/deploy.json owner=rally group=rally mode=0760
   with_dict: "{{ clouds }}"
   when: item.key not in deployments.stdout | default([])
   loop_control:
@@ -39,7 +41,7 @@
 
 - name: Create deployments
   become_user: "{{ rally_user }}"
-  shell: "{{ rally_cmd }} deployment create --file /home/rally/{{ item.key }}/deploy.json --name {{ item.key }}"
+  shell: "{{ rally_cmd }} deployment create --file /{{ item.key }}/deploy.json --name {{ item.key }}"
   with_dict: "{{ clouds }}"
   when: item.key not in deployments.stdout | default([])
   args:
@@ -48,7 +50,7 @@
     label: "{{ item.key }}"
 
 - name: Remove deployment directories
-  file: path=/home/rally/{{ item.key }} state=absent
+  file: path=/{{ item.key }} state=absent
   with_dict: "{{ clouds }}"
   when: item.key not in deployments.stdout | default([])
   loop_control:
