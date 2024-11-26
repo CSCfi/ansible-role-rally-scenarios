@@ -4,9 +4,16 @@
   debug:
     msg: "We are now configuring {{ item.key }}"
 
+- name: Select scenario {{ item.key }}
+  become_user: rally
+  shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null"
+  changed_when: False
+  args:
+    executable: /bin/bash
+
 - name: Check existing rally verifiers
   become_user: rally
-  shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && {{ rally_cmd }} verify list-verifiers | grep -v WARNING"
+  shell: "source {{ deployments_folder }}/.rally/openrc && {{ rally_cmd }} verify list-verifiers | grep -v WARNING"
   register: verifiers
   changed_when: False
   args:
@@ -22,7 +29,7 @@
 
 - block:
   - name: Check for cirros images
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && openstack image list --public -f value -c Name |grep cirros$"
+    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source {{ deployments_folder }}/.rally/openrc && openstack image list --public -f value -c Name |grep cirros$"
     register: existing_images
     failed_when: existing_images.rc  > 1
     changed_when: False
@@ -31,34 +38,34 @@
 
     # Can't use os_image since we need to source the rally deployment
   - name: Upload cirros image to openstack
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && glance image-create --name cirros --visibility public --file /tmp/{{ rally_cirros_img_url | basename }}.raw --container-format bare --disk-format raw"
+    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source {{ deployments_folder }}/.rally/openrc && glance image-create --name cirros --visibility public --file /tmp/{{ rally_cirros_img_url | basename }}.raw --container-format bare --disk-format raw"
     when: existing_images.rc == 1
     args:
       executable: /bin/bash
 
   - name: Get image id
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && openstack image list --public -f value -c Name -c ID | grep cirros$ | cut -f 1 -d ' ' | head -n 1"
+    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source {{ deployments_folder }}/.rally/openrc && openstack image list --public -f value -c Name -c ID | grep cirros$ | cut -f 1 -d ' ' | head -n 1"
     register: image_id
     changed_when: False
     args:
       executable: /bin/bash
 
   - name: Check for test flavor
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && nova flavor-list  |grep {{ tempest_test_flavor }} | cut -f 2 -d  '|' | head -n 1"
+    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source {{ deployments_folder }}/.rally/openrc && nova flavor-list  |grep {{ tempest_test_flavor }} | cut -f 2 -d  '|' | head -n 1"
     register: flavor_id
     changed_when: False
     args:
       executable: /bin/bash
 
   - name: Check for second test flavor
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && nova flavor-list  |grep {{ tempest_second_test_flavor }} | cut -f 2 -d  '|' | head -n 1"
+    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source {{ deployments_folder }}/.rally/openrc && nova flavor-list  |grep {{ tempest_second_test_flavor }} | cut -f 2 -d  '|' | head -n 1"
     register: second_flavor_id
     changed_when: False
     args:
       executable: /bin/bash
 
   - name: Check for public network UUID
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source ~/.rally/openrc && openstack network list --external |grep public |  cut -f 2 -d  '|' | head -n 1"
+    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source {{ deployments_folder }}/.rally/openrc && openstack network list --external |grep public |  cut -f 2 -d  '|' | head -n 1"
     register: public_network_id
     changed_when: False
     args:
