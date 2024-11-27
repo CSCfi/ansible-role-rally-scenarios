@@ -13,7 +13,7 @@ if [[ "$TERM" =~ "screen" ]]; then
   {{ rally_cmd }} deployment use {{ item.key }}
   verifier_id=$({{ rally_cmd }} verify list-verifiers | grep cpouta-devel | awk '{print($2)}')
   {{ rally_cmd }} verify use-verifier --id "${verifier_id}"
-  {{ rally_cmd }} verify start --skip-list {{ item.key }}-skip-list.yml --concurrency {{ concurrency }} --detailed $*
+  {{ rally_cmd }} verify start --skip-list {{ deployments_folder }}{{ item.key }}-skip-list.yml --concurrency {{ concurrency }} --detailed $*
 {% if tempest_must_be_run_in_screen -%}
 else
   echo "You are not in a screen: ${TERM}"
