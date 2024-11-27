@@ -4,19 +4,19 @@ set -euo pipefail
 # communication should not use the proxy
 export http_proxy={{ proxy_env["http_proxy"] | default('') }}
 unset https_proxy
-{% if tempest_must_be_run_in_screen %}
+{% if tempest_must_be_run_in_screen -%}
 if [[ "$TERM" =~ "screen" ]]; then
-{% endif %}
-  {% if rally_install_method == 'package' %}
+{% endif -%}
+  {% if rally_install_method == 'package' -%}
   source /home/rally/rally/bin/activate
-  {% endif %}
+  {% endif -%}
   {{ rally_cmd }} deployment use {{ item.key }}
-  verifier_id=$("${rally_cmd[@]}" verify list-verifiers | grep cpouta-devel | awk '{print($2)}')
+  verifier_id=$({{ rally_cmd }} verify list-verifiers | grep cpouta-devel | awk '{print($2)}')
   {{ rally_cmd }} verify use-verifier --id "${verifier_id}"
   {{ rally_cmd }} verify start --skip-list {{ item.key }}-skip-list.yml --concurrency {{ concurrency }} --detailed $*
-{% if tempest_must_be_run_in_screen %}
+{% if tempest_must_be_run_in_screen -%}
 else
   echo "You are not in a screen: ${TERM}"
   exit 1
 fi
-{% endif %}
+{% endif -%}
