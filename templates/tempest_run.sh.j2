@@ -11,7 +11,11 @@ if [[ "$TERM" =~ "screen" ]]; then
   source /home/rally/rally/bin/activate
   {% endif -%}
   {{ rally_cmd }} deployment use {{ item.key }}
-  verifier_id=$({{ rally_cmd }} verify list-verifiers | grep cpouta-devel | awk '{print($2)}')
+  verifier_id=$({{ rally_cmd }} verify list-verifiers | grep {{ item.key }} | awk '{print($2)}')
+  if [ -z "${verifier_id}" ]; then
+    echo 'Verifier ID not found for {{ item.key }}'
+    exit 1
+  fi
   {{ rally_cmd }} verify use-verifier --id "${verifier_id}"
   {{ rally_cmd }} verify start --skip-list {{ deployments_folder }}/{{ item.key }}-skip-list.yml --concurrency {{ concurrency }} --detailed $*
 {% if tempest_must_be_run_in_screen -%}
