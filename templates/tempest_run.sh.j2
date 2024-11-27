@@ -11,7 +11,9 @@ rally_cmd=(podman run -v /home/rally:/home/rally/data {{ container_image }})
 {% if tempest_must_be_run_in_screen %}
 if [[ "$TERM" =~ "screen" ]]; then
 {% endif %}
+  {% if rally_install_method == 'package' %}
   source /home/rally/rally/bin/activate
+  {% endif %}
   "${rally_cmd[@]}" deployment use {{ item.key }}
   "${rally_cmd[@]}" verify use-verifier --id {{ item.key }}
   "${rally_cmd[@]}" verify start --skip-list {{ item.key }}-skip-list.yml --concurrency {{ concurrency }} --detailed $*
