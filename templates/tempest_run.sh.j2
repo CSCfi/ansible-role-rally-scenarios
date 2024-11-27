@@ -1,23 +1,19 @@
 #!/bin/bash
+set -euo pipefail
 # We want any image fetches to use the possible proxy, but all OpenStack
 # communication should not use the proxy
 export http_proxy={{ proxy_env["http_proxy"] | default('') }}
 unset https_proxy
-{% if rally_install_method == 'package' %}
-rally_cmd=(rally)
-{% else %}
-rally_cmd=(podman run -v /home/rally:/home/rally/data {{ container_image }})
-{% endif %}
 {% if tempest_must_be_run_in_screen %}
 if [[ "$TERM" =~ "screen" ]]; then
 {% endif %}
   {% if rally_install_method == 'package' %}
   source /home/rally/rally/bin/activate
   {% endif %}
-  "${rally_cmd[@]}" deployment use {{ item.key }}
+  {{ rally_cmd }} deployment use {{ item.key }}
   verifier_id=$("${rally_cmd[@]}" verify list-verifiers | grep cpouta-devel | awk '{print($2)}')
-  "${rally_cmd[@]}" verify use-verifier --id "${verifier_id}"
-  "${rally_cmd[@]}" verify start --skip-list {{ item.key }}-skip-list.yml --concurrency {{ concurrency }} --detailed $*
+  {{ rally_cmd }} verify use-verifier --id "${verifier_id}"
+  {{ rally_cmd }} verify start --skip-list {{ item.key }}-skip-list.yml --concurrency {{ concurrency }} --detailed $*
 {% if tempest_must_be_run_in_screen %}
 else
   echo "You are not in a screen: ${TERM}"
