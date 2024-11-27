@@ -37,36 +37,44 @@
       executable: /bin/bash
 
     # Can't use os_image since we need to source the rally deployment
-  - name: Upload cirros image to openstack
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && glance image-create --name cirros --visibility public --file /tmp/{{ rally_cirros_img_url | basename }}.raw --container-format bare --disk-format raw"
-    when: existing_images.rc == 1
-    args:
-      executable: /bin/bash
+  # - name: Upload cirros image to openstack
+  #   shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && glance image-create --name cirros --visibility public --file /tmp/{{ rally_cirros_img_url | basename }}.raw --container-format bare --disk-format raw"
+  #   when: existing_images.rc == 1
+  #   args:
+  #     executable: /bin/bash
 
   - name: Get image id
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && openstack image list --public -f value -c Name -c ID | grep cirros$ | cut -f 1 -d ' ' | head -n 1"
-    register: image_id
+    # shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && openstack image list --public -f value -c Name -c ID | grep cirros$ | cut -f 1 -d ' ' | head -n 1"
+    # register: image_id
+    set_fact:
+      image_id: ec5efcc0-689c-45a3-bffc-2439218adb00
     changed_when: False
     args:
       executable: /bin/bash
 
   - name: Check for test flavor
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && nova flavor-list  |grep {{ tempest_test_flavor }} | cut -f 2 -d  '|' | head -n 1"
-    register: flavor_id
+    # shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && nova flavor-list  |grep {{ tempest_test_flavor }} | cut -f 2 -d  '|' | head -n 1"
+    # register: flavor_id
+    set_fact:
+      flavor_id: 0143b0d1-4788-4d1f-aa04-4473e4a7c2a6
     changed_when: False
     args:
       executable: /bin/bash
 
   - name: Check for second test flavor
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && nova flavor-list  |grep {{ tempest_second_test_flavor }} | cut -f 2 -d  '|' | head -n 1"
-    register: second_flavor_id
+    # shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && nova flavor-list  |grep {{ tempest_second_test_flavor }} | cut -f 2 -d  '|' | head -n 1"
+    # register: second_flavor_id
+    set_fact:
+      second_flavor_id: d4a2cb9c-99da-4e0f-82d7-3313cca2b2c2
     changed_when: False
     args:
       executable: /bin/bash
 
   - name: Check for public network UUID
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && openstack network list --external |grep public |  cut -f 2 -d  '|' | head -n 1"
-    register: public_network_id
+    # shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && openstack network list --external |grep public |  cut -f 2 -d  '|' | head -n 1"
+    # register: public_network_id
+    set_fact:
+      public_network_id: 26f9344a-2e81-4ef5-a018-7d20cff891ee
     changed_when: False
     args:
       executable: /bin/bash
