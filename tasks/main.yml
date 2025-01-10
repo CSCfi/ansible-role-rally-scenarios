@@ -13,6 +13,14 @@
     deployments_folder: '/home/rally/deployments'
   when: rally_install_method == 'container'
 
+- name: Create alias for csc_rally
+  template:
+    src: csc_rally_alias.j2
+    dest: '/etc/profile.d/csc_rally_alias.sh'
+    owner: root
+    mode: 0755
+  when: rally_install_method == 'container'
+
 - name: Check if tempest_skip_tests is not defined
   assert:
     that: tempest_skip_tests is not defined
