@@ -15,7 +15,7 @@
 
 - name: Create alias for csc_rally
   template:
-    src: csc_rally_alias.j2
+    src: csc_rally_alias.sh.j2
     dest: '/etc/profile.d/csc_rally_alias.sh'
     owner: root
     mode: 0755
