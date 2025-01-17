@@ -73,11 +73,11 @@
 
   - name: Set ansible facts used in tempest config
     set_fact:
-      tempest_cirros_image_uuid: "{{ image_id }}"
-      tempest_flavor_uuid: "{{ flavor_id }}"
-      tempest_second_flavor_uuid: "{{ second_flavor_id }}"
+      tempest_cirros_image_uuid: "{{ image_id.stdout }}"
+      tempest_flavor_uuid: "{{ flavor_id.stdout }}"
+      tempest_second_flavor_uuid: "{{ second_flavor_id.stdout }}"
       tempest_network_name: "{{ item.value.network_name }}"
-      tempest_public_network_id: "{{ public_network_id }}"
+      tempest_public_network_id: "{{ public_network_id.stdout }}"
 
   - name: store tempest configs in a persistent place
     file:
