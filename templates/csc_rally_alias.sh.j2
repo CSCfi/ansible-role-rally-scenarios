@@ -7,12 +7,12 @@ function csc_rally() {
         podman system prune -f
         podman image ls |grep -v REPO | grep {{ container_image }} | awk '{print($3)}'  | while read -r image_id
         do
-            echo podman image rm -f "${image_id}"
+            podman image rm -f "${image_id}"
         done
             {% if rally_container_image != '' -%}
             podman image ls |grep -v REPO | grep {{ rally_container_image }} | awk '{print($3)}'  | while read -r image_id
             do
-                echo podman image rm -f "${image_id}"
+                podman image rm -f "${image_id}"
             done
             {% endif -%}
     {% endif -%}
