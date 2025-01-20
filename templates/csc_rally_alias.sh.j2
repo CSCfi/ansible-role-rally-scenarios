@@ -1,6 +1,7 @@
 function csc_rally() {
     export http_proxy={{ proxy_env["http_proxy"] | default('') }}
-    unset https_proxy
+    export https_proxy={{ proxy_env["http_proxy"] | default('') }}
+
     {% if rally_install_method == 'package' -%}
         source /home/rally/rally/bin/activate
     {% else -%}
