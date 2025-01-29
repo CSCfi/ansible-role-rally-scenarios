@@ -6,7 +6,7 @@ do
     do
         if [ -n "${test}" ] && [ "${test}" != "---" ] && [ "${test}" != "..." ]; then
             echo "Testing '${test}'..."
-            csc_rally verify start --pattern "${test}" | grep 'Success: 1'
+            {{ rally_cmd }} verify start --pattern "${test}" | grep 'Success: 1'
             return_code=$?
             echo "Result: ${return_code}"
             if [ $return_code == 0 ]; then
@@ -15,3 +15,4 @@ do
         fi
     done <<< "$(sed 's/\[.*//' "${skip_list}"| sed 's/:.*$//')"
 done <<< "$(find /home/rally/deployments -type f -name \*skip-list.yml)"
+podman system prune -f

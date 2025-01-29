@@ -14,8 +14,8 @@
   when: rally_install_method == 'container'
 
 - name: Create script to review of tempest tests
-  copy:
-    src: files/review_skip_list.sh
+  template:
+    src: review_skip_list.sh.j2
     dest: '/usr/local/bin/review_skip_list.sh'
     owner: root
     mode: 0755
