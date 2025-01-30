@@ -9,18 +9,20 @@ do
         exit 1
     fi
     {{ rally_cmd }} verify use-verifier --id "${verifier_id}"
-    if [ -e "${skip_list}_ok_tests" ]; then
-        rm "${skip_list}_ok_tests"
+    if [ -e ".${skip_list}_ok_tests" ]; then
+        rm ".${skip_list}_ok_tests"
     fi
+    mkdir "/home/rally/deployments/.${environment}_tests_results/" -p
     while read -r test
     do
         if [ -n "${test}" ] && [ "${test}" != "---" ] && [ "${test}" != "..." ]; then
             echo "Testing '${test}'..."
-            {{ rally_cmd }} verify start --pattern "${test}" | grep 'Success: 1'
+            {{ rally_cmd }} verify start --detailed --pattern "${test}" > "/home/rally/deployments/.${environment}_tests_results/${test}_result"
+            grep 'Success: 1' "/home/rally/deployments/.${environment}_tests_results/${test}_result"
             return_code=$?
             echo "Result: ${return_code}"
             if [ $return_code == 0 ]; then
-                echo "${test}" >> "${skip_list}_ok_tests"
+                echo "${test}" >> ".${skip_list}_ok_tests"
             fi
         fi
     done <<< "$(sed 's/\[.*//' "${skip_list}"| sed 's/:.*$//')"
