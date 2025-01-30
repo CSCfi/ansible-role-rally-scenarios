@@ -1,7 +1,17 @@
 #!/bin/bash
 while read -r skip_list
 do
-    if test "${skip_list}_ok_tests"; then rm "${skip_list}_ok_tests"; fi
+    environment=$(echo "${skip_list}" | sed 's_/home/rally/deployments/__' | sed 's/-skip-list.yml//')
+    {{ rally_cmd }} deployment use "${environment}"
+    verifier_id=$({{ rally_cmd }} verify list-verifiers | grep "${environment}" | awk '{print($2)}')
+    if [ -z "${verifier_id}" ]; then
+        echo "Verifier ID not found for '${environment}'"
+        exit 1
+    fi
+    {{ rally_cmd }} verify use-verifier --id "${verifier_id}"
+    if [ -e "${skip_list}_ok_tests" ]; then
+        rm "${skip_list}_ok_tests"
+    fi
     while read -r test
     do
         if [ -n "${test}" ] && [ "${test}" != "---" ] && [ "${test}" != "..." ]; then
