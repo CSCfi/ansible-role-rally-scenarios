@@ -18,10 +18,10 @@ do
         if [ -n "${test}" ] && [ "${test}" != "---" ] && [ "${test}" != "..." ]; then
             echo "Testing '${test}'..."
             {{ rally_cmd }} verify start --detailed --pattern "${test}" > "/home/rally/deployments/.${environment}_tests_results/${test}_result"
-            grep 'Success: 1' "/home/rally/deployments/.${environment}_tests_results/${test}_result"
+            grep 'Success: 0' "/home/rally/deployments/.${environment}_tests_results/${test}_result"
             return_code=$?
             echo "Result: ${return_code}"
-            if [ $return_code == 0 ]; then
+            if [ $return_code != 0 ]; then
                 echo "${test}" >> ".${skip_list}_ok_tests"
             fi
         fi
