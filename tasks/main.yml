@@ -1,16 +1,18 @@
 ---
-- name: Set rally command and user according to install method for package
+- name: Set Rally command and user according to install method for package
   set_fact:
     rally_cmd: 'source /home/rally/rally/bin/activate && rally'
     rally_user: 'rally'
     deployments_folder: '/home/rally'
+    openstack_cmd: ''
   when: rally_install_method == 'package'
 
-- name: Set rally command and user according to install method for container
+- name: Set Rally and OpenStack command and user according to install method for container
   set_fact:
     rally_cmd: "podman run -v /home/rally/tempest_configs:/home/rally/tempest_configs -v /home/rally/deployments:/home/rally/deployments -v /home/rally/tmp:/tmp -v /home/rally/rally/etc/rally/rally.conf:/home/rally/.rally/rally.conf -v /home/rally/.rally:/home/rally/.rally {{ container_image }}"
     rally_user: 'root'
     deployments_folder: '/home/rally/deployments'
+    openstack_cmd: os_cmd
   when: rally_install_method == 'container'
 
 - name: Create script to review of tempest tests
@@ -24,6 +26,14 @@
   template:
     src: csc_rally_alias.sh.j2
     dest: '/etc/profile.d/csc_rally_alias.sh'
+    owner: root
+    mode: 0755
+  when: rally_install_method == 'container'
+
+- name: Create alias for OpenStack commands
+  template:
+    src: openstack_alias.sh.j2
+    dest: '/etc/profile.d/openstack_alias.sh'
     owner: root
     mode: 0755
   when: rally_install_method == 'container'
