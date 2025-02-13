@@ -71,6 +71,10 @@
     args:
       executable: /bin/bash
 
+  - name: Show flavor UUID
+    debug:
+      var: tempest_flavor_uuid
+
   - name: Set ansible facts used in tempest config
     set_fact:
       tempest_cirros_image_uuid: "{{ image_id.stdout }}"
