@@ -70,9 +70,9 @@
     args:
       executable: /bin/bash
 
-  - name: Show flavor UUID stderr
+  - name: Show flavor UUID
     debug:
-      var: flavor_id.stderr
+      var: flavor_id.stdout
 
   - name: Set ansible facts used in tempest config
     set_fact:
