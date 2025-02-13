@@ -73,7 +73,7 @@
 
   - name: Show flavor UUID
     debug:
-      var: tempest_flavor_uuid
+      var: flavor_id.stdout
 
   - name: Set ansible facts used in tempest config
     set_fact:
