@@ -1,4 +1,6 @@
 #!/bin/bash
+# This script goes throw the skip_list and check if the test passes now.
+
 while read -r skip_list
 do
     environment=$(echo "${skip_list}" | sed 's_/home/rally/deployments/__' | sed 's/-skip-list.yml//')
@@ -26,5 +28,20 @@ do
             fi
         fi
     done <<< "$(sed 's/\[.*//' "${skip_list}"| sed 's/:.*$//')"
+
+    new_list=$({{ rally_cmd }} verify list-verifier-tests)
+    for skipped_test in $(cat /home/rally/deployments/${environment}-skip-list.yml | grep -v '^---' | grep -v '^\.\.\.')
+    do
+        test_name=$(echo "${skipped_test}" | grep ^tempest | cut -d ':' -f1);
+        if [ -n "${test_name}" ]; then
+            if ! echo "${new_list}"|grep -qE "^${test_name}[:\[]"; then
+                echo "Maybe remove: $test_name"
+            fi
+        fi;
+    done
 done <<< "$(find /home/rally/deployments -type f -name \*skip-list.yml)"
+
+
+{% if rally_install_method == 'container' %}
 podman system prune -f
+{% endif %}
