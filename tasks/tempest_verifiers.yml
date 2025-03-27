@@ -28,22 +28,22 @@
     executable: /bin/bash
 
 - block:
-  - name: Check for cirros images
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && {{ openstack_cmd }} openstack image list --public -f value -c Name |grep cirros$"
+  - name: Check for image
+    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && {{ openstack_cmd }} openstack image list --public -f value -c Name |grep {{ img_name }}$"
     register: existing_images
     failed_when: existing_images.rc  > 1
     changed_when: False
     args:
       executable: /bin/bash
 
-  - name: Upload cirros image to openstack
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && {{ openstack_cmd }} glance image-create --name cirros --visibility public --file /tmp/{{ rally_cirros_img_url | basename }}.raw --container-format bare --disk-format raw"
+  - name: Upload image to openstack
+    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && {{ openstack_cmd }} glance image-create --name {{ img_name }} --visibility public --file /tmp/{{ img_url | basename }}.raw --container-format bare --disk-format raw"
     when: existing_images.rc == 1
     args:
       executable: /bin/bash
 
   - name: Get image id
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && {{ openstack_cmd }} openstack image list --public -f value -c Name -c ID | grep cirros$ | cut -f 1 -d ' ' | head -n 1"
+    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && {{ openstack_cmd }} openstack image list --public -f value -c Name -c ID | grep {{ img_name }}$ | cut -f 1 -d ' ' | head -n 1"
     register: image_id
     changed_when: False
     args:
@@ -72,7 +72,7 @@
 
   - name: Set ansible facts used in tempest config
     set_fact:
-      tempest_cirros_image_uuid: "{{ image_id.stdout }}"
+      tempest_image_uuid: "{{ image_id.stdout }}"
       tempest_flavor_uuid: "{{ flavor_id.stdout }}"
       tempest_second_flavor_uuid: "{{ second_flavor_id.stdout }}"
       tempest_network_name: "{{ item.value.network_name }}"
