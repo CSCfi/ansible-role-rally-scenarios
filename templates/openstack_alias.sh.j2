@@ -1,5 +1,6 @@
 function os_cmd() {
     podman run \
+        -v /tmp:/tmp \
         -e "OS_AUTH_URL=${OS_AUTH_URL}" \
         -e "OS_IDENTITY_API_VERSION=${OS_IDENTITY_API_VERSION}" \
         -e "OS_PROJECT_NAME=${OS_PROJECT_NAME}" \
