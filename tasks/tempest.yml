@@ -6,6 +6,7 @@
     url: "{{ img_url }}"
     dest: "/tmp/{{ img_url | basename }}"
     use_proxy: no
+    timeout: 30
 
 - name: Convert image to raw format
   become: false
