@@ -48,10 +48,10 @@ if [ -z "${verifier_id}" ]; then
 fi
 {{ rally_cmd }} verify use-verifier --id "${verifier_id}"
 echo "Testing '${test}'..."
-{{ rally_cmd }} verify start --detailed --pattern "${test}" > "/home/rally/deployments/.${environment}_tests_results/${test}_result"
-grep 'Success: 0' "/home/rally/deployments/.${environment}_tests_results/${test}_result"
+{{ rally_cmd }} verify start --detailed --pattern "${test}" |tee "${environment}_${test}_result"
+grep 'Success: 0' "${environment}_${test}_result"
 return_code=$?
 echo "Result: ${return_code}"
 if [ $return_code != 0 ]; then
-    echo "${test}" >> "/home/rally/deployments/.${environment}_ok_tests"
+    echo "${test}" >> "${environment}_ok_tests"
 fi
