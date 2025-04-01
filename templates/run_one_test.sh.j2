@@ -30,6 +30,16 @@ do
   esac
 done
 
+if [ -z "${environment}" ]; then
+    echo "You must indicate an environment and test-pattern."
+    usage
+    exit 1
+fi
+if [ -z "${test}" ]; then
+    echo "You must indicate an environment and test-pattern."
+    usage
+    exit 1
+fi
 {{ rally_cmd }} deployment use "${environment}"
 verifier_id=$({{ rally_cmd }} verify list-verifiers | grep "${environment}" | awk '{print($2)}')
 if [ -z "${verifier_id}" ]; then
