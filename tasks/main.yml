@@ -22,6 +22,13 @@
     owner: root
     mode: 0755
 
+- name: Create script to run single tempest tests
+  template:
+    src: run_one_test.sh.j2
+    dest: '/usr/local/bin/run_one_test.sh'
+    owner: root
+    mode: 0755
+
 - name: Create alias for csc_rally
   template:
     src: csc_rally_alias.sh.j2

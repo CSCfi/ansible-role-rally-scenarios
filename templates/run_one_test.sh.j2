@@ -1,0 +1,47 @@
+#!/bin/bash
+
+function usage() {
+    echo "run_one_test.sh --environment|-e <ENVIRONMENT> --test-pattern|-t <PATTERN>"
+    echo ""
+    echo "  --environment|-e <ENVIRONMENT> Select the environment. Like cpouta-test, cpouta-production, epouta-test, ..."
+    echo "  --test-pattern|-t <PATTER>     Pattern for the test name to run."
+}
+while [ $# -gt 0 ]
+do
+  case "$1" in
+    "--help"|"-h"|"-?")
+        usage
+        exit 0
+        ;;
+    "--environment"|"-e")
+        shift
+        environment="${1}"
+        shift
+        ;;
+    "--test-pattern"|"-t")
+        shift
+        test="${1}"
+        shift
+        ;;
+    *)
+      echo "Ignoring unknwon parameter '${1}'"
+      shift
+      ;;
+  esac
+done
+
+{{ rally_cmd }} deployment use "${environment}"
+verifier_id=$({{ rally_cmd }} verify list-verifiers | grep "${environment}" | awk '{print($2)}')
+if [ -z "${verifier_id}" ]; then
+    echo "Verifier ID not found for '${environment}'"
+    exit 1
+fi
+{{ rally_cmd }} verify use-verifier --id "${verifier_id}"
+echo "Testing '${test}'..."
+{{ rally_cmd }} verify start --detailed --pattern "${test}" > "/home/rally/deployments/.${environment}_tests_results/${test}_result"
+grep 'Success: 0' "/home/rally/deployments/.${environment}_tests_results/${test}_result"
+return_code=$?
+echo "Result: ${return_code}"
+if [ $return_code != 0 ]; then
+    echo "${test}" >> "/home/rally/deployments/.${environment}_ok_tests"
+fi
