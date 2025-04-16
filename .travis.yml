@@ -1,13 +1,12 @@
 language: python
 
-sudo: required
 dist: trusty
 group: edge
 
 services:
   - docker
 
-matrix:
+jobs:
   fast_finish: true
 
 env:
