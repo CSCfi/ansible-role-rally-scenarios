@@ -13,7 +13,7 @@
 
 - name: Check existing rally verifiers
   become_user: "{{ rally_user }}"
-  shell: "source /home/rally/.rally/openrc && {{ rally_cmd }} verify list-verifiers | grep -v WARNING"
+  shell: "{{ rally_cmd }} verify list-verifiers | grep -v WARNING"
   register: verifiers
   changed_when: False
   args:
