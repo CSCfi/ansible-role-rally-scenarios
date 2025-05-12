@@ -1,6 +1,6 @@
 ---
 rally_install_method: package
-container_image: xrally/xrally-openstack
+container_image: docker.io/xrally/xrally-openstack
 rally_container_image: ''
 container_name: rally
 
