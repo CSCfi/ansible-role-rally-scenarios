@@ -4,7 +4,6 @@
   get_url:
     url: "{{ img_url }}"
     dest: "/tmp/{{ img_url | basename }}"
-    use_proxy: no
     timeout: 30
 
 - name: Install qemu-img
