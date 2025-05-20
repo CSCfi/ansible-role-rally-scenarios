@@ -1,5 +1,4 @@
 ---
 - name: Reload Systemd Daemon
-  systemd_service:
-    daemon_reload: true
+  command: /usr/bin/systemctl daemon-reload
 ...
