@@ -1,0 +1,4 @@
+[Service]
+Type=oneshot
+User={{ rally_user }}
+ExecStart=/usr/bin/sh -c '{{ deployments_folder }}/{{ item.key }}-tempest_run.sh --tag cron_$(date +%Y_%m_%d_%H)'

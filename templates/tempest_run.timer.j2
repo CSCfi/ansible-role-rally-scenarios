@@ -1,0 +1,6 @@
+[Timer]
+OnCalendar=*-*-* {{ item.value.tempest_cron_run_hour }}:00:00
+Unit=tempest_run_{{ item.key }}.service
+
+[Install]
+WantedBy=timers.target
