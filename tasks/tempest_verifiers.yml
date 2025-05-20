@@ -105,7 +105,7 @@
   - name: "Configure cronjob for deployment {{ item.key }}"
     cron:
       name: "Run tempest against {{ item.key }}"
-      user: rally
+      user: "{{ rally_user }}"
       hour: "{{ item.value.tempest_cron_run_hour }}"
       minute: "0"
       job: "{{ deployments_folder }}/{{ item.key }}-tempest_run.sh --tag cron_$(date +%Y_%m_%d_%H)"
