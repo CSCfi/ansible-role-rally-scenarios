@@ -25,7 +25,3 @@
 
 - include_tasks: tempest_verifiers.yml
   with_dict: "{{ clouds }}"
-  handlers:
-    - name: Reload Systemd Daemon
-      systemd_service:
-        daemon_reload: true
