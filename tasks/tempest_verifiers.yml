@@ -117,7 +117,13 @@
       dest: /etc/systemd/system/tempest_run_{{ item.key }}.service
       mode: 0600
     when: item.value.configure_tempest_cron | default('false')
-    notify: Reload Systemd Daemon
+
+  - name: Enable tempest run service
+    systemd:
+      name: "tempest_run_{{ item.key }}.service"
+      enabled: true
+      masked: false
+      daemon_reload: true
 
   - name: Create systemd timer unit
     template:
@@ -125,7 +131,13 @@
       dest: /etc/systemd/system/tempest_run_{{ item.key }}.timer
       mode: 0600
     when: item.value.configure_tempest_cron | default('false')
-    notify: Reload Systemd Daemon
+
+  - name: Enable tempest run timer
+    systemd:
+      name: "tempest_run_{{ item.key }}.timer"
+      enabled: true
+      masked: false
+      daemon_reload: true
 
   become_user: "{{ rally_user }}"
   environment:
