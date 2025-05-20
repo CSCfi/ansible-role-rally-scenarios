@@ -102,15 +102,6 @@
   - name: Template in tempest run bash script
     template: src=tempest_run.sh.j2 dest={{ deployments_folder }}/{{ item.key }}-tempest_run.sh owner=rally group=rally mode=0700
 
-  # - name: "Configure cronjob for deployment {{ item.key }}"
-  #   cron:
-  #     name: "Run tempest against {{ item.key }}"
-  #     user: "{{ rally_user }}"
-  #     hour: "{{ item.value.tempest_cron_run_hour }}"
-  #     minute: "0"
-  #     job: "{{ deployments_folder }}/{{ item.key }}-tempest_run.sh --tag cron_$(date +%Y_%m_%d_%H)"
-  #   when: item.value.configure_tempest_cron | default('false')
-
   - name: Create systemd service unit
     template:
       src: tempest_run.service.j2
@@ -137,6 +128,7 @@
     systemd:
       name: "tempest_run_{{ item.key }}.timer"
       enabled: true
+      state: started
       masked: false
       daemon_reload: true
     when: item.value.configure_tempest_cron | default('false')
