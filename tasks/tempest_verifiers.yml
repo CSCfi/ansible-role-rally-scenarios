@@ -117,6 +117,7 @@
       dest: /etc/systemd/system/tempest_run_{{ item.key }}.service
       mode: 0600
     when: item.value.configure_tempest_cron | default('false')
+    notify: Reload Systemd Daemon
 
   - name: Create systemd timer unit
     template:
@@ -124,9 +125,14 @@
       dest: /etc/systemd/system/tempest_run_{{ item.key }}.timer
       mode: 0600
     when: item.value.configure_tempest_cron | default('false')
+    notify: Reload Systemd Daemon
 
   become_user: "{{ rally_user }}"
   environment:
     ftp_proxy: ""
     http_proxy: ""
     https_proxy: ""
+  handlers:
+    - name: Reload Systemd Daemon
+      systemd_service:
+        daemon_reload: true
