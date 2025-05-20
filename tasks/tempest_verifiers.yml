@@ -124,6 +124,7 @@
       enabled: true
       masked: false
       daemon_reload: true
+    when: item.value.configure_tempest_cron | default('false')
 
   - name: Create systemd timer unit
     template:
@@ -138,6 +139,7 @@
       enabled: true
       masked: false
       daemon_reload: true
+    when: item.value.configure_tempest_cron | default('false')
 
   become_user: "{{ rally_user }}"
   environment:
