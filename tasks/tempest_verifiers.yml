@@ -132,7 +132,3 @@
     ftp_proxy: ""
     http_proxy: ""
     https_proxy: ""
-  handlers:
-    - name: Reload Systemd Daemon
-      systemd_service:
-        daemon_reload: true
