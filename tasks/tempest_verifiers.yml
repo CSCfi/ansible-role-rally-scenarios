@@ -116,12 +116,14 @@
       src: tempest_run.service.j2
       dest: /etc/systemd/system/tempest_run_{{ item.key }}.service
       mode: 0600
+    when: item.value.configure_tempest_cron | default('false')
 
   - name: Create systemd timer unit
     template:
       src: tempest_run.timer.j2
       dest: /etc/systemd/system/tempest_run_{{ item.key }}.timer
       mode: 0600
+    when: item.value.configure_tempest_cron | default('false')
 
   become_user: "{{ rally_user }}"
   environment:
