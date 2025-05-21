@@ -15,13 +15,5 @@
   command:
     cmd: "qemu-img convert -f qcow2 -O raw /tmp/{{ img_url | basename }} /tmp/{{ img_url | basename }}.raw"
 
-# - name: Upload image to rally server
-#   copy:
-#     src: "/tmp/{{ img_url | basename }}.raw"
-#     dest: "/tmp/{{ img_url | basename }}.raw"
-#     owner: root
-#     group: root
-#     mode: '0644'
-
 - include_tasks: tempest_verifiers.yml
   with_dict: "{{ clouds }}"
