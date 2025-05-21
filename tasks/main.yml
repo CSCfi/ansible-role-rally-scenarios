@@ -12,7 +12,7 @@
     rally_cmd: "podman run -v /home/rally/tempest_configs:/home/rally/tempest_configs -v /home/rally/deployments:/home/rally/deployments -v /home/rally/tmp:/tmp -v /home/rally/rally/etc/rally/rally.conf:/home/rally/.rally/rally.conf -v /home/rally/.rally:/home/rally/.rally {{ container_image }}"
     rally_user: 'root'
     deployments_folder: '/home/rally/deployments'
-    openstack_cmd: podman run -v /tmp:/tmp -e "OS_AUTH_URL=${OS_AUTH_URL}" -e "OS_IDENTITY_API_VERSION=${OS_IDENTITY_API_VERSION}" -e "OS_PROJECT_NAME=${OS_PROJECT_NAME}" -e "OS_PROJECT_DOMAIN_NAME=${OS_PROJECT_DOMAIN_NAME}" -e "OS_USERNAME=${OS_USERNAME}" -e "OS_USER_DOMAIN_NAME=${OS_USER_DOMAIN_NAME}" -e "OS_PASSWORD=${OS_PASSWORD}" '{{ openstack_container_image }}'
+    openstack_cmd: podman run -v /tmp:/tmp -e "OS_AUTH_URL=${OS_AUTH_URL}" -e "OS_IDENTITY_API_VERSION=${OS_IDENTITY_API_VERSION}" -e "OS_PROJECT_NAME=${OS_PROJECT_NAME}" -e "OS_PROJECT_DOMAIN_NAME=${OS_PROJECT_DOMAIN_NAME}" -e "OS_USERNAME=${OS_USERNAME}" -e "OS_USER_DOMAIN_NAME=${OS_USER_DOMAIN_NAME}" -e "OS_PASSWORD=${OS_PASSWORD}" '{{ openstack_container_image }} '
   when: rally_install_method == 'container'
 
 - name: Create script to review of tempest tests
