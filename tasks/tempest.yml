@@ -1,25 +1,19 @@
 ---
-- name: Get image locally
+- name: Get image
   become: false
-  local_action:
-    module: get_url
-    url: "{{ rally_cirros_img_url }}"
-    dest: "/tmp/{{ rally_cirros_img_url | basename }}"
-    use_proxy: no
+  get_url:
+    url: "{{ img_url }}"
+    dest: "/tmp/{{ img_url | basename }}"
+    timeout: 30
+
+- name: Install qemu-img
+  package:
+    name: qemu-img
 
 - name: Convert image to raw format
   become: false
-  local_action:
-    module: command
-    cmd: "qemu-img convert -f qcow2 -O raw /tmp/{{ rally_cirros_img_url | basename }} /tmp/{{ rally_cirros_img_url | basename }}.raw"
-
-- name: Upload image to rally server
-  copy:
-    src: "/tmp/{{ rally_cirros_img_url | basename }}.raw"
-    dest: "/tmp/{{ rally_cirros_img_url | basename }}.raw"
-    owner: root
-    group: root
-    mode: '0644'
+  command:
+    cmd: "qemu-img convert -f qcow2 -O raw /tmp/{{ img_url | basename }} /tmp/{{ img_url | basename }}.raw"
 
 - include_tasks: tempest_verifiers.yml
   with_dict: "{{ clouds }}"

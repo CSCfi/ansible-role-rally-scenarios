@@ -1,17 +1,16 @@
 language: python
 
-sudo: required
 dist: trusty
 group: edge
 
 services:
   - docker
 
-matrix:
+jobs:
   fast_finish: true
 
 env:
-  - IMAGE_BUILD_PLATFORM=stable-centos7
+  - IMAGE_BUILD_PLATFORM=stable-almalinux8
 #  - IMAGE_BUILD_PLATFORM=devel-centos7
 
 install:

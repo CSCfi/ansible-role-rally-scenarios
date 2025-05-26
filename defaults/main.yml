@@ -1,4 +1,9 @@
 ---
+rally_install_method: package
+container_image: docker.io/xrally/xrally-openstack
+rally_container_image: ''
+container_name: rally
+
 clouds: {}
 # Configuration for each cloud which will be set up. A rally "deployment" is
 # set up for each configured cloud. If configure_tempest: True, a tempest
@@ -55,7 +60,7 @@ clouds: {}
 #     tempest_skip_tests: { tempest.scenario.test_volume_boot_pattern.TestVolumeBootPattern.test_volume_boot_pattern[compute,id-557cd2c2-4eb8-4dce-98be-f86765ff311b,image,volume]: "Disabled due to reasons" }
 
 # These settings are used if they are set. Your server might need to go through
-# a proxy server to reach the relevant packages etc. 
+# a proxy server to reach the relevant packages etc.
 #proxy_env:
 # http_proxy: proxy_server_address:port
 # https_proxy: proxy_server_address_port
@@ -106,7 +111,10 @@ concurrency: 1
 # - "[section1]"
 # - "setting2 = True"
 
-rally_cirros_img_url: "http://download.cirros-cloud.net/0.6.2/cirros-0.6.2-x86_64-disk.img"
+# You might need to change rally_tempest_extra_settings to include in validation
+# the ssh_user of your image of choice if is not 'cirros'
+img_url: "https://download.cirros-cloud.net/0.6.3/cirros-0.6.3-x86_64-disk.img"
+img_name: "cirros"
 
 # Git clone rally-openstack because the sample scenarios are there and they are nice to have
 rally_openstack_gitrepo_source: https://github.com/openstack/rally-openstack

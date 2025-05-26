@@ -1,6 +1,6 @@
-# Latest version of centos
-FROM centos:centos7
-MAINTAINER James Cuzella <james.cuzella@lyraphase.com>
+# AlmaLinux version 8
+FROM almalinux:8
+MAINTAINER Antonio J. Delgado <antonio.delgado@csc.fi>
 RUN yum clean all && \
     yum -y install epel-release && \
     yum -y groupinstall "Development tools" && \

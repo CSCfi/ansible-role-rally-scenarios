@@ -4,7 +4,7 @@
 
 This role is is meant to be used together with ansible-role-rally.
 
-This role will configure rally deployments and optionally tempest verifiers for each cloud you specify. The role uses the http_proxy and https_proxy environment variables for access to e.g. the installation of rally/tempest and retrieval of Cirros images.
+This role will configure rally deployments and optionally tempest verifiers for each cloud you specify. The role uses the http_proxy and https_proxy environment variables for access to e.g. the installation of rally/tempest and retrieval of images.
 
 If tempest verifiers are configred, this role will deploy the necessary shell scripts to start tempest verifications, but the role will not trigger the tempest verifications itself.
 

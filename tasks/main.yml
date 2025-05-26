@@ -1,33 +1,79 @@
 ---
+- name: Set Rally command and user according to install method for package
+  set_fact:
+    rally_cmd: 'source /home/rally/rally/bin/activate && rally'
+    rally_user: 'rally'
+    deployments_folder: '/home/rally'
+    openstack_cmd: ''
+  when: rally_install_method == 'package'
+
+- name: Set Rally and OpenStack command and user according to install method for container
+  set_fact:
+    rally_cmd: "podman run -v /home/rally/tempest_configs:/home/rally/tempest_configs -v /home/rally/deployments:/home/rally/deployments -v /home/rally/tmp:/tmp -v /home/rally/rally/etc/rally/rally.conf:/home/rally/.rally/rally.conf -v /home/rally/.rally:/home/rally/.rally {{ container_image }}"
+    rally_user: 'root'
+    deployments_folder: '/home/rally/deployments'
+    openstack_cmd: podman run -v /tmp:/tmp -e "OS_AUTH_URL=${OS_AUTH_URL}" -e "OS_IDENTITY_API_VERSION=${OS_IDENTITY_API_VERSION}" -e "OS_PROJECT_NAME=${OS_PROJECT_NAME}" -e "OS_PROJECT_DOMAIN_NAME=${OS_PROJECT_DOMAIN_NAME}" -e "OS_USERNAME=${OS_USERNAME}" -e "OS_USER_DOMAIN_NAME=${OS_USER_DOMAIN_NAME}" -e "OS_PASSWORD=${OS_PASSWORD}" '{{ openstack_container_image }} '
+  when: rally_install_method == 'container'
+
+- name: Create script to review of tempest tests
+  template:
+    src: review_skip_list.sh.j2
+    dest: '/usr/local/bin/review_skip_list.sh'
+    owner: root
+    mode: 0755
+
+- name: Create script to run single tempest tests
+  template:
+    src: run_one_test.sh.j2
+    dest: '/usr/local/bin/run_one_test.sh'
+    owner: root
+    mode: 0755
+
+- name: Create alias for csc_rally
+  template:
+    src: csc_rally_alias.sh.j2
+    dest: '/etc/profile.d/csc_rally_alias.sh'
+    owner: root
+    mode: 0755
+  when: rally_install_method == 'container'
+
+- name: Create alias for OpenStack commands
+  template:
+    src: openstack_alias.sh.j2
+    dest: '/etc/profile.d/openstack_alias.sh'
+    owner: root
+    mode: 0755
+  when: rally_install_method == 'container'
+
 - name: Check if tempest_skip_tests is not defined
   assert:
     that: tempest_skip_tests is not defined
     msg: "Note the global tempest_skip_tests variable has now been moved to a per cloud env variable"
 
 - name: Check existing deployments
-  shell: source /home/rally/rally/bin/activate && rally deployment list && deactivate
+  shell: "{{ rally_cmd }} deployment list"
   register: deployments
   changed_when: False
   args:
     executable: /bin/bash
 
 - name: Create directories for deployments
-  file: path=/home/rally/{{ item.key }} owner=rally group=rally mode=0750 state=directory
+  file: path={{ deployments_folder }}/{{ item.key }} owner=rally group=rally mode=0750 state=directory
   with_dict: "{{ clouds }}"
   when: item.key not in deployments.stdout | default([])
   loop_control:
     label: "{{ item.key }}"
 
 - name: Create deployment files
-  template: src=deploy.json.j2 dest=/home/rally/{{ item.key }}/deploy.json owner=rally group=rally mode=0760
+  template: src=deploy.json.j2 dest={{ deployments_folder }}/{{ item.key }}/deploy.json owner=rally group=rally mode=0760
   with_dict: "{{ clouds }}"
   when: item.key not in deployments.stdout | default([])
   loop_control:
     label: "{{ item.key }}"
 
 - name: Create deployments
-  become_user: rally
-  shell: source /home/rally/rally/bin/activate && rally deployment create --file /home/rally/{{ item.key }}/deploy.json --name {{ item.key }} && deactivate
+  become_user: "{{ rally_user }}"
+  shell: "{{ rally_cmd }} deployment create --file {{ deployments_folder }}/{{ item.key }}/deploy.json --name {{ item.key }}"
   with_dict: "{{ clouds }}"
   when: item.key not in deployments.stdout | default([])
   args:
@@ -36,7 +82,7 @@
     label: "{{ item.key }}"
 
 - name: Remove deployment directories
-  file: path=/home/rally/{{ item.key }} state=absent
+  file: path={{ deployments_folder }}/{{ item.key }} state=absent
   with_dict: "{{ clouds }}"
   when: item.key not in deployments.stdout | default([])
   loop_control:

@@ -1,0 +1,8 @@
+[Unit]
+Description=Tempest run for {{ item.key }}
+After=syslog.target network.target auditd.service
+
+[Service]
+Type=oneshot
+User={{ rally_user }}
+ExecStart=/usr/bin/sh -c '{{ deployments_folder }}/{{ item.key }}-tempest_run.sh --tag service_$(date +%%Y_%%m_%%d_%%H)'

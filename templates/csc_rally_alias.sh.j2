@@ -1,0 +1,21 @@
+function csc_rally() {
+    {% if rally_install_method == 'package' -%}
+        source /home/rally/rally/bin/activate
+    {% else -%}
+        podman system prune -f
+        if [ "${1}" == '--clean-images' ]; then
+            shift
+            podman image ls |grep -v REPO | grep {{ container_image }} | awk '{print($3)}'  | while read -r image_id
+            do
+                podman image rm -f "${image_id}"
+            done
+                {% if rally_container_image != '' -%}
+                podman image ls |grep -v REPO | grep {{ rally_container_image }} | awk '{print($3)}'  | while read -r image_id
+                do
+                    podman image rm -f "${image_id}"
+                done
+                {% endif -%}
+        fi
+    {% endif -%}
+    {{ rally_cmd }} "${@}"
+}
