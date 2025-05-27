@@ -1,4 +1,9 @@
 ---
+- name: Remove previously downloaded image
+  file:
+    path: "/tmp/{{ img_url | basename }}"
+    state: absent
+
 - name: Get image
   become: false
   get_url:
