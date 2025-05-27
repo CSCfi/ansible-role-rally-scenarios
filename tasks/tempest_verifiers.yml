@@ -94,7 +94,7 @@
   - name: Template in tempest config
     template:
       src: tempest.j2
-      dest: /home/rally/tempest_configs/{{ item.key }}.tempest
+      dest: "/home/rally/tempest_configs/{{ item.key }}.tempest"
       owner: rally
       group: rally
       mode: 0700
@@ -109,7 +109,7 @@
   - name: Template in skip list
     template:
       src: tempest_skip_list.yml.j2
-      dest: {{ deployments_folder }}/{{ item.key }}-skip-list.yml
+      dest: "{{ deployments_folder }}/{{ item.key }}-skip-list.yml"
       owner: rally
       group: rally
       mode: 0600
@@ -117,7 +117,7 @@
   - name: Template in tempest run bash script
     template:
       src: tempest_run.sh.j2
-      dest: {{ deployments_folder }}/{{ item.key }}-tempest_run.sh
+      dest: "{{ deployments_folder }}/{{ item.key }}-tempest_run.sh"
       owner: rally
       group: rally
       mode: 0700
@@ -125,7 +125,7 @@
   - name: Create systemd service unit
     template:
       src: tempest_run.service.j2
-      dest: /etc/systemd/system/tempest_run_{{ item.key }}.service
+      dest: "/etc/systemd/system/tempest_run_{{ item.key }}.service"
       mode: 0600
     when: item.value.configure_tempest_cron | default('false')
 
@@ -140,7 +140,7 @@
   - name: Create systemd timer unit
     template:
       src: tempest_run.timer.j2
-      dest: /etc/systemd/system/tempest_run_{{ item.key }}.timer
+      dest: "/etc/systemd/system/tempest_run_{{ item.key }}.timer"
       mode: 0600
     when: item.value.configure_tempest_cron | default('false')
 
