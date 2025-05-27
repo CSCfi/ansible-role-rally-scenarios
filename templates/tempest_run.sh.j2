@@ -17,10 +17,8 @@ if [[ "$TERM" =~ "screen" ]]; then
     exit 1
   fi
   {{ rally_cmd }} verify use-verifier --id "${verifier_id}"
-  {{ rally_cmd }} verify start --skip-list {{ deployments_folder }}/{{ item.key }}-skip-list.yml --concurrency {{ concurrency }} --detailed "${@}"
+  {{ rally_cmd }} verify start --skip-list {{ deployments_folder }}/{{ item.key }}-skip-list.yml --concurrency {{ concurrency }} --detailed $*
   {% if item.value.tempest_manual_forloop_cleanup %}
-  # item.value.tempest_manual_forloop_cleanup = {{ item.value.tempest_manual_forloop_cleanup }}
-  # item.value = {{ item.value }}
   # Remove any resources with tempest in their names. Perhaps acceptable in a devel/test environment.
   source /home/rally/.rally/openrc
   for snapshot in $({{ openstack_cmd }}openstack volume snapshot list --all-projects -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest volume snapshot $snapshot; {{ openstack_cmd }}openstack volume snapshot delete $snapshot; done
