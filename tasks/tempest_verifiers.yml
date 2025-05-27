@@ -28,8 +28,13 @@
     executable: /bin/bash
 
 - block:
+  - name: Select deployment to use
+    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null"
+    args:
+      executable: /bin/bash
+
   - name: Check for image
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && {{ openstack_cmd }} openstack image list --public -f value -c Name |grep {{ img_name }}$"
+    shell: "source /home/rally/.rally/openrc && {{ openstack_cmd }} openstack image list --public -f value -c Name |grep {{ img_name }}$"
     register: existing_images
     failed_when: existing_images.rc  > 1
     changed_when: False
@@ -37,34 +42,34 @@
       executable: /bin/bash
 
   - name: Upload image to openstack
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && {{ openstack_cmd }} glance image-create --name {{ img_name }} --visibility public --file /tmp/{{ img_url | basename }}.raw --container-format bare --disk-format raw"
+    shell: "source /home/rally/.rally/openrc && {{ openstack_cmd }} glance image-create --name {{ img_name }} --visibility public --file /tmp/{{ img_url | basename }}.raw --container-format bare --disk-format raw"
     when: existing_images.rc == 1
     args:
       executable: /bin/bash
 
   - name: Get image id
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && {{ openstack_cmd }} openstack image list --public -f value -c Name -c ID | grep {{ img_name }}$ | cut -f 1 -d ' ' | head -n 1"
+    shell: "source /home/rally/.rally/openrc && {{ openstack_cmd }} openstack image list --public -f value -c Name -c ID | grep {{ img_name }}$ | cut -f 1 -d ' ' | head -n 1"
     register: image_id
     changed_when: False
     args:
       executable: /bin/bash
 
   - name: Check for test flavor
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && {{ openstack_cmd }} nova flavor-list  |grep {{ tempest_test_flavor }} | cut -f 2 -d  '|' | head -n 1"
+    shell: "source /home/rally/.rally/openrc && {{ openstack_cmd }} nova flavor-list  |grep {{ tempest_test_flavor }} | cut -f 2 -d  '|' | head -n 1"
     register: flavor_id
     changed_when: False
     args:
       executable: /bin/bash
 
   - name: Check for second test flavor
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && {{ openstack_cmd }} nova flavor-list  |grep {{ tempest_second_test_flavor }} | cut -f 2 -d  '|' | head -n 1"
+    shell: "source /home/rally/.rally/openrc && {{ openstack_cmd }} nova flavor-list  |grep {{ tempest_second_test_flavor }} | cut -f 2 -d  '|' | head -n 1"
     register: second_flavor_id
     changed_when: False
     args:
       executable: /bin/bash
 
   - name: Check for public network UUID
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && source /home/rally/.rally/openrc && {{ openstack_cmd }} openstack network list --external |grep public |  cut -f 2 -d  '|' | head -n 1"
+    shell: "source /home/rally/.rally/openrc && {{ openstack_cmd }} openstack network list --external |grep public |  cut -f 2 -d  '|' | head -n 1"
     register: public_network_id
     changed_when: False
     args:
@@ -91,7 +96,7 @@
     register: reg_tempest_config
 
   - name: Configure rally verifier if templating in the templest config file task changed or new verifier created
-    shell: "{{ rally_cmd }} deployment use {{ item.key }} &>/dev/null && {{ rally_cmd }} verify use-verifier --id {{ item.key }} &&  {{ rally_cmd }} verify configure-verifier --extend /home/rally/tempest_configs/{{ item.key }}.tempest"
+    shell: "{{ rally_cmd }} verify use-verifier --id {{ item.key }} &&  {{ rally_cmd }} verify configure-verifier --extend /home/rally/tempest_configs/{{ item.key }}.tempest"
     args:
       executable: /bin/bash
     when: reg_tempest_config.changed or verifier_created is not skipped
