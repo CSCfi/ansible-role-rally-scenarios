@@ -4,6 +4,11 @@
     path: "/tmp/{{ img_url | basename }}"
     state: absent
 
+- name: Remove previously converted image
+  file:
+    path: "/tmp/{{ img_url | basename }}.raw"
+    state: absent
+
 - name: Get image
   become: false
   get_url:
