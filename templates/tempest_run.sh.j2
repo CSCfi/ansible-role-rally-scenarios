@@ -23,12 +23,12 @@ fi
 {%- if item.value.tempest_manual_forloop_cleanup %}
 # Remove any resources with tempest in their names. Perhaps acceptable in a devel/test environment.
 source /home/rally/.rally/openrc
-for snapshot in $({{ openstack_cmd }}openstack volume snapshot list --all-projects -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest volume snapshot $snapshot; {{ openstack_cmd }}openstack volume snapshot delete $snapshot; done
-for volume in $({{ openstack_cmd }}openstack volume list --all-projects -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest volume $volume; {{ openstack_cmd }}openstack volume set --state error $volume; openstack volume delete $volume; done
-for image in $({{ openstack_cmd }}openstack image list -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest image $image; {{ openstack_cmd }}openstack image delete $image; done
-for aggregate in $({{ openstack_cmd }}openstack aggregate list -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest aggregate $aggregate; {{ openstack_cmd }}openstack aggregate delete $aggregate; done
-for project in $({{ openstack_cmd }}openstack project list -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest project $project; {{ openstack_cmd }}openstack project delete $project;done
-for domain in $({{ openstack_cmd }}openstack domain list -f csv -c ID -c Name|tr -d '"'|grep tempest-test_domain|cut -d "," -f1); do echo \#Disabling and deleting Tempest domain $domain; {{ openstack_cmd }}openstack domain set --disable $domain; openstack domain delete $domain; done
+for snapshot in $({{ openstack_cmd }} openstack volume snapshot list --all-projects -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest volume snapshot $snapshot; {{ openstack_cmd }} openstack volume snapshot delete $snapshot; done
+for volume in $({{ openstack_cmd }} openstack volume list --all-projects -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest volume $volume; {{ openstack_cmd }} openstack volume set --state error $volume; openstack volume delete $volume; done
+for image in $({{ openstack_cmd }} openstack image list -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest image $image; {{ openstack_cmd }} openstack image delete $image; done
+for aggregate in $({{ openstack_cmd }} openstack aggregate list -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest aggregate $aggregate; {{ openstack_cmd }} openstack aggregate delete $aggregate; done
+for project in $({{ openstack_cmd }} openstack project list -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest project $project; {{ openstack_cmd }} openstack project delete $project;done
+for domain in $({{ openstack_cmd }} openstack domain list -f csv -c ID -c Name|tr -d '"'|grep tempest-test_domain|cut -d "," -f1); do echo \#Disabling and deleting Tempest domain $domain; {{ openstack_cmd }} openstack domain set --disable $domain; openstack domain delete $domain; done
 {%- endif %}
 
 {{ rally_cmd }} verify start --skip-list {{ deployments_folder }}/{{ item.key }}-skip-list.yml --concurrency {{ concurrency }} --detailed "${@}"
@@ -36,12 +36,12 @@ for domain in $({{ openstack_cmd }}openstack domain list -f csv -c ID -c Name|tr
 {%- if item.value.tempest_manual_forloop_cleanup %}
 # Remove any resources with tempest in their names. Perhaps acceptable in a devel/test environment.
 source /home/rally/.rally/openrc
-for snapshot in $({{ openstack_cmd }}openstack volume snapshot list --all-projects -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest volume snapshot $snapshot; {{ openstack_cmd }}openstack volume snapshot delete $snapshot; done
-for volume in $({{ openstack_cmd }}openstack volume list --all-projects -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest volume $volume; {{ openstack_cmd }}openstack volume set --state error $volume; {{ openstack_cmd }}openstack volume delete $volume; done
-for image in $({{ openstack_cmd }}openstack image list -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest image $image; {{ openstack_cmd }}openstack image delete $image; done
-for aggregate in $({{ openstack_cmd }}openstack aggregate list -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest aggregate $aggregate; {{ openstack_cmd }}openstack aggregate delete $aggregate; done
-for project in $({{ openstack_cmd }}openstack project list -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest project $project; {{ openstack_cmd }}openstack project delete $project;done
-for domain in $({{ openstack_cmd }}openstack domain list -f csv -c ID -c Name|tr -d '"'|grep tempest-test_domain|cut -d "," -f1); do echo \#Disabling and deleting Tempest domain $domain; {{ openstack_cmd }}openstack domain set --disable $domain; {{ openstack_cmd }}openstack domain delete $domain; done
+for snapshot in $({{ openstack_cmd }} openstack volume snapshot list --all-projects -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest volume snapshot $snapshot; {{ openstack_cmd }} openstack volume snapshot delete $snapshot; done
+for volume in $({{ openstack_cmd }} openstack volume list --all-projects -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest volume $volume; {{ openstack_cmd }} openstack volume set --state error $volume; {{ openstack_cmd }} openstack volume delete $volume; done
+for image in $({{ openstack_cmd }} openstack image list -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest image $image; {{ openstack_cmd }} openstack image delete $image; done
+for aggregate in $({{ openstack_cmd }} openstack aggregate list -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest aggregate $aggregate; {{ openstack_cmd }} openstack aggregate delete $aggregate; done
+for project in $({{ openstack_cmd }} openstack project list -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest project $project; {{ openstack_cmd }} openstack project delete $project;done
+for domain in $({{ openstack_cmd }} openstack domain list -f csv -c ID -c Name|tr -d '"'|grep tempest-test_domain|cut -d "," -f1); do echo \#Disabling and deleting Tempest domain $domain; {{ openstack_cmd }} openstack domain set --disable $domain; {{ openstack_cmd }} openstack domain delete $domain; done
 {%- endif %}
 {%- if tempest_must_be_run_in_screen -%}
 else
