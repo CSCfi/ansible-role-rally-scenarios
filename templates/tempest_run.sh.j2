@@ -4,6 +4,7 @@ set -euo pipefail
 # communication should not use the proxy
 export http_proxy='{{ proxy_env["http_proxy"] | default('') }}'
 unset https_proxy
+
 {%- if tempest_must_be_run_in_screen -%}
 if [[ "$TERM" =~ "screen" ]]; then
 {%- endif -%}
