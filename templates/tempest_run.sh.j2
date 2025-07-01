@@ -22,15 +22,6 @@ if [ -z "${verifier_id}" ]; then
 fi
 {{ rally_cmd }} verify use-verifier --id "${verifier_id}"
 
-{% if item.value.tempest_manual_forloop_cleanup %}
-# Remove any resources with tempest in their names. Perhaps acceptable in a devel/test environment.
-source /home/rally/.rally/openrc
-for snapshot in $({{ openstack_cmd }} openstack volume snapshot list --all-projects -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest volume snapshot $snapshot; {{ openstack_cmd }} openstack volume snapshot delete $snapshot; done
-for volume in $({{ openstack_cmd }} openstack volume list --all-projects -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest volume $volume; {{ openstack_cmd }} openstack volume set --state error $volume; {{ openstack_cmd }} openstack volume delete $volume; done
-for image in $({{ openstack_cmd }} openstack image list -f csv -c ID -c Name -c Status | grep -v "deleted" | grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest image $image; {{ openstack_cmd }} openstack image delete $image; done
-for project in $({{ openstack_cmd }} openstack project list -f csv -c ID -c Name |grep -i tempest-|tr -d '"'|cut -d "," -f1); do echo \#Deleting Tempest project $project; {{ openstack_cmd }} openstack project delete $project;done
-{% endif %}
-
 {{ rally_cmd }} verify start --skip-list {{ deployments_folder }}/{{ item.key }}-skip-list.yml --concurrency {{ concurrency }} --detailed "${@}"
 
 {% if item.value.tempest_manual_forloop_cleanup %}
