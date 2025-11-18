@@ -127,7 +127,7 @@
       src: tempest_run.service.j2
       dest: "/etc/systemd/system/tempest_run_{{ item.key }}.service"
       mode: 0600
-    when: item.value.configure_tempest_cron | default('false')
+    when: item.value.configure_tempest_systemd_service | default('false')
 
   - name: Enable tempest run service
     systemd:
@@ -135,14 +135,14 @@
       enabled: true
       masked: false
       daemon_reload: true
-    when: item.value.configure_tempest_cron | default('false')
+    when: item.value.configure_tempest_systemd_service | default('false')
 
   - name: Create systemd timer unit
     template:
       src: tempest_run.timer.j2
       dest: "/etc/systemd/system/tempest_run_{{ item.key }}.timer"
       mode: 0600
-    when: item.value.configure_tempest_cron | default('false')
+    when: item.value.configure_tempest_systemd_timer | default('false')
 
   - name: Enable tempest run timer
     systemd:
@@ -151,7 +151,7 @@
       state: started
       masked: false
       daemon_reload: true
-    when: item.value.configure_tempest_cron | default('false')
+    when: item.value.configure_tempest_systemd_timer | default('false')
 
   become_user: "{{ rally_user }}"
   environment:
