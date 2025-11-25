@@ -15,7 +15,7 @@ podman system prune -f
 {% endif -%}
 
 {{ rally_cmd }} deployment use {{ item.key }}
-verifier_id=$({{ rally_cmd }} verify list-verifiers | grep {{ item.key }} | awk '{print($2)}')
+verifier_id=$({{ rally_cmd }} verify list-verifiers | grep " {{ item.key }} " | awk '{print($2)}')
 if [ -z "${verifier_id}" ]; then
   echo 'Verifier ID not found for {{ item.key }}'
   exit 1
