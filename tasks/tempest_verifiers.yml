@@ -75,6 +75,13 @@
     args:
       executable: /bin/bash
 
+  - name: Check for subnet UUID of public network
+    shell: "source /home/rally/.rally/openrc && {{ openstack_cmd }} openstack subnet list --network {{ public_network_id.stdout }} -f value -c ID|head -n 1"
+    register: public_subnet_id
+    changed_when: False
+    args:
+      executable: /bin/bash
+
   - name: Set ansible facts used in tempest config
     set_fact:
       tempest_image_uuid: "{{ image_id.stdout }}"
@@ -82,6 +89,7 @@
       tempest_second_flavor_uuid: "{{ second_flavor_id.stdout }}"
       tempest_network_name: "{{ item.value.network_name }}"
       tempest_public_network_id: "{{ public_network_id.stdout }}"
+      tempest_public_subnet_id: "{{ public_subnet_id.stdout }}"
 
   - name: store tempest configs in a persistent place
     file:
