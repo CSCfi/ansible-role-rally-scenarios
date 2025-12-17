@@ -24,10 +24,8 @@ volume_size = {{ tempest_volume_size }}
 storage_protocol = {{ rally_tempest_cinder_storage_protocol }}
 
 [network]
-{% if rally_tempest_floating_ips is true %}
 public_network_id = {{ tempest_public_network_id }}
 subnet_id = {{ tempest_public_subnet_id }}
-{% endif %}
 
 [network-feature-enabled]
 ipv6_subnet_attributes = False
