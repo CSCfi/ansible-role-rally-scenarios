@@ -97,7 +97,7 @@
       executable: /bin/bash
 
   - name: Check for subnet UUID of public network
-    shell: "source /home/rally/.rally/openrc && {{ openstack_cmd }} openstack subnet list --network {{ public_network_id.stdout }} -f value -c ID|head -n 1"
+    shell: "source /home/rally/.rally/openrc && {{ openstack_cmd }} openstack subnet list --network {{ public_network_id.stdout }} -f value -c ID|tail -n 1"
     register: public_subnet_id
     changed_when: False
     args:
