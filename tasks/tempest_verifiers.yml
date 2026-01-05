@@ -136,6 +136,12 @@
       executable: /bin/bash
     when: reg_tempest_config.changed or verifier_created is not skipped
 
+  - name: Undefine public network for tempest in ePouta
+    shell: 'find /home/rally/.rally/verification/ -type f -name "tempest.conf" -exec sed -i "/^public_network_id/d" "{}" \;'
+    args:
+      executable: /bin/bash
+    when: not rally_tempest_floating_ips | default('true')
+
   - name: Template in skip list
     template:
       src: tempest_skip_list.yml.j2
