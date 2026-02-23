@@ -2,7 +2,7 @@ function csc_rally() {
     {% if rally_install_method == 'package' -%}
         source /home/rally/rally/bin/activate
     {% else -%}
-        podman system prune -f
+        podman system prune -f > /dev/null
         if [ "${1}" == '--clean-images' ]; then
             shift
             podman image ls |grep -v REPO | grep {{ container_image }} | awk '{print($3)}'  | while read -r image_id

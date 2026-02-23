@@ -54,6 +54,27 @@
     args:
       executable: /bin/bash
 
+  - name: Check for alt image
+    shell: "source /home/rally/.rally/openrc && {{ openstack_cmd }} openstack image list --public -f value -c Name |grep {{ img_alt_name }}$"
+    register: existing_alt_images
+    failed_when: existing_alt_images.rc  > 1
+    changed_when: False
+    args:
+      executable: /bin/bash
+
+  - name: Upload alt image to openstack
+    shell: "source /home/rally/.rally/openrc && {{ openstack_cmd }} glance image-create --name {{ img_alt_name }} --visibility public --file /tmp/{{ img_alt_url | basename }}.raw --container-format bare --disk-format raw"
+    when: existing_alt_images.rc == 1
+    args:
+      executable: /bin/bash
+
+  - name: Get alt image id
+    shell: "source /home/rally/.rally/openrc && {{ openstack_cmd }} openstack image list --public -f value -c Name -c ID | grep {{ img_alt_name }}$ | cut -f 1 -d ' ' | head -n 1"
+    register: alt_image_id
+    changed_when: False
+    args:
+      executable: /bin/bash
+
   - name: Check for test flavor
     shell: "source /home/rally/.rally/openrc && {{ openstack_cmd }} nova flavor-list  |grep {{ tempest_test_flavor }} | cut -f 2 -d  '|' | head -n 1"
     register: flavor_id
@@ -75,13 +96,22 @@
     args:
       executable: /bin/bash
 
+  - name: Check for subnet UUID of public network
+    shell: "source /home/rally/.rally/openrc && {{ openstack_cmd }} openstack subnet list --network {{ public_network_id.stdout }} -f value -c ID|tail -n 1"
+    register: public_subnet_id
+    changed_when: False
+    args:
+      executable: /bin/bash
+
   - name: Set ansible facts used in tempest config
     set_fact:
       tempest_image_uuid: "{{ image_id.stdout }}"
+      tempest_alt_image_uuid: "{{ alt_image_id.stdout }}"
       tempest_flavor_uuid: "{{ flavor_id.stdout }}"
       tempest_second_flavor_uuid: "{{ second_flavor_id.stdout }}"
       tempest_network_name: "{{ item.value.network_name }}"
       tempest_public_network_id: "{{ public_network_id.stdout }}"
+      tempest_public_subnet_id: "{{ public_subnet_id.stdout }}"
 
   - name: store tempest configs in a persistent place
     file:
@@ -105,6 +135,12 @@
     args:
       executable: /bin/bash
     when: reg_tempest_config.changed or verifier_created is not skipped
+
+  - name: Undefine public network for tempest in ePouta
+    shell: 'find /home/rally/.rally/verification/ -type f -name "tempest.conf" -exec sed -i "/^public_network_id/d" "{}" \;'
+    args:
+      executable: /bin/bash
+    when: not rally_tempest_floating_ips | default('true')
 
   - name: Template in skip list
     template:

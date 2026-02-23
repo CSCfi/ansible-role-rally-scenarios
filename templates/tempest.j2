@@ -4,7 +4,7 @@ swift_reseller_admin_role = {{ rally_tempest_swift_reseller_admin_role }}
 
 [compute]
 image_ref = {{ tempest_image_uuid }}
-image_ref_alt = {{ tempest_image_uuid }}
+image_ref_alt = {{ tempest_alt_image_uuid }}
 flavor_ref = {{ tempest_flavor_uuid }}
 flavor_ref_alt = {{ tempest_second_flavor_uuid }}
 fixed_network_name = {{ tempest_network_name }}
@@ -19,10 +19,13 @@ discoverability = {{ rally_tempest_swift_discoverability }}
 {% endif %}
 
 [volume]
+catalog_type = {{ rally_tempest_cinder_catalog_type }}
 volume_size = {{ tempest_volume_size }}
+storage_protocol = {{ rally_tempest_cinder_storage_protocol }}
 
 [network]
 public_network_id = {{ tempest_public_network_id }}
+subnet_id = {{ tempest_public_subnet_id }}
 
 [network-feature-enabled]
 ipv6_subnet_attributes = False
